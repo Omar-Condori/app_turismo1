@@ -316,8 +316,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                             controller.isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
-                                            color: Colors.white,
-                                            size: 22,
+                                            color: Colors.black87,
+                                            size: 20,
                                           ),
                                         ),
                                         validator: (value) {
@@ -345,8 +345,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                             controller.isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
-                                            color: Colors.white,
-                                            size: 22,
+                                            color: Colors.black87,
+                                            size: 20,
                                           ),
                                         ),
                                         validator: (value) {
@@ -452,7 +452,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: const Color(0xFF2C2C54),
+          color: Colors.white.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -461,9 +461,9 @@ class _RegisterPageState extends State<RegisterPage> {
         keyboardType: keyboardType,
         obscureText: obscureText,
         validator: validator,
-        cursorColor: const Color(0xFF2C2C54),
+        cursorColor: Color(0xFF2C3E50),
         style: TextStyle(
-          color: Colors.white,
+          color: Colors.black,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
@@ -479,6 +479,34 @@ class _RegisterPageState extends State<RegisterPage> {
             size: 20,
           ),
           suffixIcon: suffixIcon,
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: Color(0xFF2C3E50),
+              width: 1.5,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: Color(0xFF2C3E50),
+              width: 2,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: Color(0xFF2C3E50),
+              width: 2,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 1,
+            ),
+          ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
@@ -502,7 +530,7 @@ class _RegisterPageState extends State<RegisterPage> {
         borderRadius: BorderRadius.circular(15),
         gradient: isPrimary
             ? const LinearGradient(
-          colors: [Color(0xFF2C2C54), Color(0xFF1A1A2E)],
+          colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         )
@@ -523,7 +551,7 @@ class _RegisterPageState extends State<RegisterPage> {
         boxShadow: [
           BoxShadow(
             color: isPrimary
-                ? const Color(0xFF2C2C54).withOpacity(0.3)
+                ? const Color(0xFF667EEA).withOpacity(0.3)
                 : Colors.white.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
