@@ -1,0 +1,59 @@
+name: capachica_tourism_app
+description: App móvil para el turismo en Capachica
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Estado y navegación
+  get: ^4.6.6
+
+  # HTTP y conectividad
+  http: ^1.1.0
+  connectivity_plus: ^6.1.4
+
+  # Almacenamiento local
+  shared_preferences: ^2.2.2
+
+  # Utilidades
+  intl: ^0.18.1
+
+  # UI y multimedia
+  cached_network_image: ^3.3.0
+  image_picker: ^1.0.4
+
+  # Geolocalización y mapas
+  geolocator: ^10.1.0
+  google_maps_flutter: ^2.5.0
+
+  # Iconos
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
