@@ -1,83 +1,79 @@
 class ServicioModel {
-  final String id;
-  final String name;
-  final String description;
-  final String category;
-  final String providerId;
-  final String providerName;
-  final double price;
-  final String currency;
-  final String duration;
-  final List<String> images;
-  final List<String> includes;
-  final List<String> requirements;
-  final double rating;
-  final int reviewCount;
-  final bool isAvailable;
+  final int id;
+  final String nombre;
+  final String descripcion;
+  final String precioReferencial;
+  final int emprendedorId;
+  final bool estado;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final int capacidad;
+  final String latitud;
+  final String longitud;
+  final String ubicacionReferencia;
+  final Map<String, dynamic> emprendedor;
+  final List<Map<String, dynamic>> categorias;
+  final List<Map<String, dynamic>> horarios;
+  final List<dynamic> sliders;
 
   ServicioModel({
     required this.id,
-    required this.name,
-    required this.description,
-    required this.category,
-    required this.providerId,
-    required this.providerName,
-    required this.price,
-    this.currency = 'PEN',
-    required this.duration,
-    this.images = const [],
-    this.includes = const [],
-    this.requirements = const [],
-    this.rating = 0.0,
-    this.reviewCount = 0,
-    this.isAvailable = true,
+    required this.nombre,
+    required this.descripcion,
+    required this.precioReferencial,
+    required this.emprendedorId,
+    required this.estado,
     required this.createdAt,
     required this.updatedAt,
+    required this.capacidad,
+    required this.latitud,
+    required this.longitud,
+    required this.ubicacionReferencia,
+    required this.emprendedor,
+    required this.categorias,
+    required this.horarios,
+    required this.sliders,
   });
 
   factory ServicioModel.fromJson(Map<String, dynamic> json) {
     return ServicioModel(
       id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      category: json['category'],
-      providerId: json['providerId'],
-      providerName: json['providerName'],
-      price: json['price'].toDouble(),
-      currency: json['currency'] ?? 'PEN',
-      duration: json['duration'],
-      images: List<String>.from(json['images'] ?? []),
-      includes: List<String>.from(json['includes'] ?? []),
-      requirements: List<String>.from(json['requirements'] ?? []),
-      rating: json['rating'].toDouble(),
-      reviewCount: json['reviewCount'],
-      isAvailable: json['isAvailable'] ?? true,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      nombre: json['nombre'],
+      descripcion: json['descripcion'],
+      precioReferencial: json['precio_referencial'],
+      emprendedorId: json['emprendedor_id'],
+      estado: json['estado'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      capacidad: json['capacidad'],
+      latitud: json['latitud'],
+      longitud: json['longitud'],
+      ubicacionReferencia: json['ubicacion_referencia'],
+      emprendedor: json['emprendedor'],
+      categorias: List<Map<String, dynamic>>.from(json['categorias']),
+      horarios: List<Map<String, dynamic>>.from(json['horarios']),
+      sliders: json['sliders'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
-      'description': description,
-      'category': category,
-      'providerId': providerId,
-      'providerName': providerName,
-      'price': price,
-      'currency': currency,
-      'duration': duration,
-      'images': images,
-      'includes': includes,
-      'requirements': requirements,
-      'rating': rating,
-      'reviewCount': reviewCount,
-      'isAvailable': isAvailable,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'nombre': nombre,
+      'descripcion': descripcion,
+      'precio_referencial': precioReferencial,
+      'emprendedor_id': emprendedorId,
+      'estado': estado,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      'capacidad': capacidad,
+      'latitud': latitud,
+      'longitud': longitud,
+      'ubicacion_referencia': ubicacionReferencia,
+      'emprendedor': emprendedor,
+      'categorias': categorias,
+      'horarios': horarios,
+      'sliders': sliders,
     };
   }
 }

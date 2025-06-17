@@ -55,7 +55,9 @@ class TourismRepository {
   Future<List<ServicioModel>> getServiciosByCategory(String category) async {
     try {
       final servicios = await getServicios();
-      return servicios.where((s) => s.category == category).toList();
+      return servicios.where((s) => 
+        s.categorias.any((c) => c['nombre']?.toLowerCase() == category.toLowerCase())
+      ).toList();
     } catch (e) {
       rethrow;
     }
@@ -65,8 +67,8 @@ class TourismRepository {
     try {
       final servicios = await getServicios();
       return servicios
-          .where((s) => s.name.toLowerCase().contains(query.toLowerCase()) ||
-              s.description.toLowerCase().contains(query.toLowerCase()))
+          .where((s) => s.nombre.toLowerCase().contains(query.toLowerCase()) ||
+              s.descripcion.toLowerCase().contains(query.toLowerCase()))
           .toList();
     } catch (e) {
       rethrow;

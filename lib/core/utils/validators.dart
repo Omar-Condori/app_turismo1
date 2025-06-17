@@ -4,9 +4,9 @@ class Validators {
       return 'Por favor ingresa tu correo electrónico';
     }
 
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4});
-        if (!emailRegex.hasMatch(value)) {
-    return 'Por favor ingresa un correo válido';
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Por favor ingresa un correo válido';
     }
 
     return null;
@@ -41,9 +41,9 @@ class Validators {
       return null; // Campo opcional
     }
 
-    final phoneRegex = RegExp(r'^\+?[\d\s\-\(\)]{7,});
-        if (!phoneRegex.hasMatch(value)) {
-    return 'Por favor ingresa un número de teléfono válido';
+    final phoneRegex = RegExp(r'^\+?[\d\s\-\(\)]{7,}$');
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Por favor ingresa un número de teléfono válido';
     }
 
     return null;

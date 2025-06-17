@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/home/municipalidad_page.dart';
+import '../../presentation/pages/home/servicios_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
 import '../../bindings/auth_binding.dart';
@@ -27,6 +28,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.MUNICIPALIDAD,
       page: () => MunicipalidadPage(),
+      binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SERVICIOS,
+      page: () => ServiciosPage(),
       binding: HomeBinding(),
     ),
   ];

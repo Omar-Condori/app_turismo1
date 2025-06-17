@@ -107,10 +107,38 @@ class HomeController extends GetxController {
   Future<void> loadServicios() async {
     try {
       isLoading.value = true;
-      final result = await _repository.getServicios();
-      servicios.value = result;
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/servicios'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          servicios.value = (data['data']['data'] as List)
+              .map((json) => ServicioModel.fromJson(json))
+              .toList();
+        } else {
+          Get.snackbar(
+            'Error',
+            'No se pudieron cargar los servicios',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          'No se pudieron cargar los servicios',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (e) {
       print('Error al cargar servicios: $e');
+      Get.snackbar(
+        'Error',
+        'Error al cargar los servicios: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -183,7 +211,7 @@ class HomeController extends GetxController {
     Get.toNamed('/emprendimiento/$id');
   }
 
-  void goToServicioDetail(String id) {
+  void goToServicioDetail(int id) {
     Get.toNamed('/servicio/$id');
   }
 
@@ -220,8 +248,10 @@ class HomeController extends GetxController {
   }
 
   void goToServicios() {
-    // Navigate to servicios page or change tab
-    selectedTabIndex.value = 2;
+    // Navegar a la página de servicios
+    Get.toNamed('/servicios');
+    // Cargar los servicios
+    loadServicios();
   }
 
   void goToEventos() {

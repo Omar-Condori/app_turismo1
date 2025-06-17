@@ -48,31 +48,39 @@ class ServiciosPage extends GetView<HomeController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               }
 
               if (controller.servicios.isEmpty) {
-                return Center(
+                return const Center(
                   child: Text(
-                    AppStrings.noServiciosFound,
-                    style: TextStyle(color: Colors.grey[600]),
+                    'No hay servicios disponibles',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
                 );
               }
 
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                itemCount: controller.servicios.length,
-                itemBuilder: (context, index) {
-                  final servicio = controller.servicios[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: ServicioCard(
-                      servicio: servicio,
-                      onTap: () => controller.goToServicioDetail(servicio.id),
-                    ),
-                  );
-                },
+              return RefreshIndicator(
+                onRefresh: () => controller.loadServicios(),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  itemCount: controller.servicios.length,
+                  itemBuilder: (context, index) {
+                    final servicio = controller.servicios[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: ServicioCard(
+                        servicio: servicio,
+                        onTap: () => controller.goToServicioDetail(servicio.id),
+                      ),
+                    );
+                  },
+                ),
               );
             }),
           ),

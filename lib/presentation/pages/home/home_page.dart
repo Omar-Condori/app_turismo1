@@ -101,7 +101,7 @@ class HomePage extends GetView<HomeController> {
                         child: Obx(() => Row(
                           children: List.generate(
                             controller.tabTitles.length,
-                            (index) => Expanded(
+                                (index) => Expanded(
                               child: GestureDetector(
                                 onTap: () => _onTabSelected(index),
                                 child: AnimatedContainer(
@@ -119,12 +119,12 @@ class HomePage extends GetView<HomeController> {
                                         : Colors.transparent,
                                     boxShadow: controller.selectedTabIndex.value == index
                                         ? [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ]
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ]
                                         : null,
                                   ),
                                   child: FittedBox(
@@ -155,6 +155,98 @@ class HomePage extends GetView<HomeController> {
               ),
 
               const Spacer(),
+
+              // Botones de servicios y negocios
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // Botón de servicios (reducido)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => controller.goToServicios(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF2D3748),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 4,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.miscellaneous_services, color: AppColors.primary),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Servicios',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    // Botón de negocios
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF667EEA).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Aquí puedes agregar la lógica para el botón de negocios
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.business, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text(
+                                'Negocios',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
 
               // Premium bottom navigation
               Container(
@@ -197,28 +289,28 @@ class HomePage extends GetView<HomeController> {
                           AppStrings.home,
                           0,
                           controller.selectedBottomNavIndex.value == 0,
-                          () => controller.changeBottomNav(0),
+                              () => controller.changeBottomNav(0),
                         ),
                         _buildNavItem(
                           Icons.photo_library_rounded,
                           'Fotos',
                           1,
                           controller.selectedBottomNavIndex.value == 1,
-                          () => controller.changeBottomNav(1),
+                              () => controller.changeBottomNav(1),
                         ),
                         _buildNavItem(
                           Icons.settings_rounded,
                           AppStrings.settings,
                           2,
                           controller.selectedBottomNavIndex.value == 2,
-                          () => controller.changeBottomNav(2),
+                              () => controller.changeBottomNav(2),
                         ),
                         _buildNavItem(
                           Icons.person_rounded,
                           'Perfil',
                           3,
                           controller.selectedBottomNavIndex.value == 3,
-                          () => Get.toNamed(AppRoutes.LOGIN),
+                              () => Get.toNamed(AppRoutes.LOGIN),
                         ),
                       ],
                     )),
@@ -242,12 +334,12 @@ class HomePage extends GetView<HomeController> {
   }
 
   Widget _buildNavItem(
-    IconData icon,
-    String label,
-    int index,
-    bool isSelected,
-    VoidCallback onTap,
-  ) {
+      IconData icon,
+      String label,
+      int index,
+      bool isSelected,
+      VoidCallback onTap,
+      ) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

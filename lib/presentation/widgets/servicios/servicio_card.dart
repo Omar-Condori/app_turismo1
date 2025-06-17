@@ -34,18 +34,10 @@ class ServicioCard extends StatelessWidget {
             // Image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.network(
-                servicio.images.first,
+              child: Container(
                 height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.image_not_supported, size: 50),
-                  );
-                },
+                color: Colors.grey[300],
+                child: const Icon(Icons.image_not_supported, size: 50),
               ),
             ),
 
@@ -61,7 +53,7 @@ class ServicioCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          servicio.name,
+                          servicio.nombre,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -71,7 +63,7 @@ class ServicioCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${servicio.currency} ${servicio.price.toStringAsFixed(2)}',
+                        'S/. ${servicio.precioReferencial}',
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -84,30 +76,31 @@ class ServicioCard extends StatelessWidget {
                   const SizedBox(height: 8),
 
                   // Category
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      servicio.category,
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                  if (servicio.categorias.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        servicio.categorias.first['nombre'] ?? 'Sin categoría',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
 
                   const SizedBox(height: 8),
 
                   // Description
                   Text(
-                    servicio.description,
+                    servicio.descripcion,
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -129,7 +122,32 @@ class ServicioCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          servicio.providerName,
+                          servicio.emprendedor['nombre'] ?? 'Sin proveedor',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Location
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: Colors.grey[600],
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          servicio.ubicacionReferencia,
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
