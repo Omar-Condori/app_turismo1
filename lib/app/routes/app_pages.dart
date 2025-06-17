@@ -1,10 +1,8 @@
 import 'package:get/get.dart';
+import '../../presentation/pages/home/home_page.dart';
+import '../../presentation/pages/home/municipalidad_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
-import '../../presentation/pages/home/home_page.dart';
-import '../../presentation/pages/home/emprendimientos_page.dart';
-import '../../presentation/pages/home/servicios_page.dart';
-import '../../presentation/pages/home/eventos_page.dart';
 import '../../bindings/auth_binding.dart';
 import '../../bindings/home_binding.dart';
 import 'app_routes.dart';
@@ -27,18 +25,8 @@ class AppPages {
       binding: AuthBinding(),
     ),
     GetPage(
-      name: AppRoutes.EMPRENDIMIENTOS,
-      page: () => EmprendimientosPage(),
-      binding: HomeBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.SERVICIOS,
-      page: () => ServiciosPage(),
-      binding: HomeBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.EVENTOS,
-      page: () => EventosPage(),
+      name: AppRoutes.MUNICIPALIDAD,
+      page: () => MunicipalidadPage(),
       binding: HomeBinding(),
     ),
   ];

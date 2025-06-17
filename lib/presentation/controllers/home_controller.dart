@@ -2,9 +2,13 @@ import 'package:get/get.dart';
 import '../../data/models/emprendimiento_model.dart';
 import '../../data/models/servicio_model.dart';
 import '../../data/models/evento_model.dart';
+import '../../data/models/dashboard_summary_model.dart';
 import '../../data/repositories/tourism_repository.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/models/user_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../data/models/municipalidad_model.dart';
 
 class HomeController extends GetxController {
   final TourismRepository _repository = Get.find<TourismRepository>();
@@ -17,6 +21,7 @@ class HomeController extends GetxController {
   final RxString searchQuery = ''.obs;
   final Rx<UserModel?> currentUser = Rx<UserModel?>(null);
   final RxBool isUserLoaded = false.obs;
+  final Rx<DashboardSummaryModel?> dashboardSummary = Rx<DashboardSummaryModel?>(null);
 
   final RxInt selectedTabIndex = 0.obs;
   final RxInt selectedBottomNavIndex = 0.obs;
@@ -28,10 +33,21 @@ class HomeController extends GetxController {
     'Eventos',
   ];
 
+  final municipalidad = Rxn<MunicipalidadModel>();
+
+  final List<String> tabs = [
+    'Inicio',
+    'Emprendimientos',
+    'Servicios',
+    'Resumen',
+    'Eventos',
+  ];
+
   @override
   void onInit() {
     super.onInit();
     loadCurrentUser();
+    loadMunicipalidadInfo();
   }
 
   Future<void> loadCurrentUser() async {
@@ -44,17 +60,45 @@ class HomeController extends GetxController {
     }
   }
 
+  Future<void> loadDashboardSummary() async {
+    try {
+      isLoading.value = true;
+      print('Iniciando petición al dashboard...');
+      final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/dashboard/summary'));
+      print('Respuesta recibida: ${response.statusCode}');
+      print('Cuerpo de la respuesta: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        dashboardSummary.value = DashboardSummaryModel.fromJson(data);
+        print('Datos del dashboard cargados: ${dashboardSummary.value}');
+      } else {
+        print('Error en la respuesta: ${response.statusCode}');
+        Get.snackbar(
+          'Error',
+          'No se pudo cargar el resumen del dashboard: ${response.statusCode}',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print('Error al cargar el dashboard: $e');
+      Get.snackbar(
+        'Error',
+        'Error al cargar el resumen del dashboard: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> loadEmprendimientos() async {
     try {
       isLoading.value = true;
       final result = await _repository.getEmprendimientos();
       emprendimientos.value = result;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudieron cargar los emprendimientos',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error al cargar emprendimientos: $e');
     } finally {
       isLoading.value = false;
     }
@@ -66,11 +110,7 @@ class HomeController extends GetxController {
       final result = await _repository.getServicios();
       servicios.value = result;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudieron cargar los servicios',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error al cargar servicios: $e');
     } finally {
       isLoading.value = false;
     }
@@ -82,11 +122,7 @@ class HomeController extends GetxController {
       final result = await _repository.getEventos();
       eventos.value = result;
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudieron cargar los eventos',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error al cargar eventos: $e');
     } finally {
       isLoading.value = false;
     }
@@ -157,6 +193,21 @@ class HomeController extends GetxController {
 
   void changeTab(int index) {
     selectedTabIndex.value = index;
+    switch (index) {
+      case 0: // Resumen
+        loadMunicipalidadInfo();
+        Get.toNamed('/municipalidad');
+        break;
+      case 1: // Negocios
+        loadEmprendimientos();
+        break;
+      case 2: // Servicios
+        loadServicios();
+        break;
+      case 3: // Eventos
+        loadEventos();
+        break;
+    }
   }
 
   void changeBottomNav(int index) {
@@ -176,5 +227,35 @@ class HomeController extends GetxController {
   void goToEventos() {
     // Navigate to eventos page or change tab
     selectedTabIndex.value = 3;
+  }
+
+  Future<void> loadMunicipalidadInfo() async {
+    try {
+      isLoading.value = true;
+      print('Iniciando petición a la API de municipalidad...');
+      
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/api/municipalidad'),
+      );
+      
+      print('Código de respuesta: ${response.statusCode}');
+      print('Respuesta del servidor: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null && jsonResponse['data'].isNotEmpty) {
+          municipalidad.value = MunicipalidadModel.fromJson(jsonResponse['data'][0]);
+          print('Datos de la municipalidad cargados exitosamente');
+        } else {
+          print('No se encontraron datos en la respuesta');
+        }
+      } else {
+        print('Error en la petición: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en la petición: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

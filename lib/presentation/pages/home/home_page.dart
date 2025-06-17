@@ -60,7 +60,7 @@ class HomePage extends GetView<HomeController> {
           // Main content
           Column(
             children: [
-              // Top section with glassmorphism tabs - ARREGLADO
+              // Top section with glassmorphism tabs
               Container(
                 margin: EdgeInsets.only(
                   top: MediaQuery.of(context).padding.top + 12,
@@ -101,16 +101,16 @@ class HomePage extends GetView<HomeController> {
                         child: Obx(() => Row(
                           children: List.generate(
                             controller.tabTitles.length,
-                                (index) => Expanded(
+                            (index) => Expanded(
                               child: GestureDetector(
-                                onTap: () => controller.changeTab(index),
+                                onTap: () => _onTabSelected(index),
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
                                   margin: const EdgeInsets.symmetric(horizontal: 2),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, // Reducido de 16 a 12
-                                    vertical: 16,   // Aumentado de 14 a 16
+                                    horizontal: 12,
+                                    vertical: 16,
                                   ),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
@@ -119,15 +119,15 @@ class HomePage extends GetView<HomeController> {
                                         : Colors.transparent,
                                     boxShadow: controller.selectedTabIndex.value == index
                                         ? [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ]
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ]
                                         : null,
                                   ),
-                                  child: FittedBox( // Agregado FittedBox para ajustar texto
+                                  child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     child: Text(
                                       controller.tabTitles[index],
@@ -136,11 +136,11 @@ class HomePage extends GetView<HomeController> {
                                             ? const Color(0xFF2D3748)
                                             : Colors.white,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 12, // Reducido de 13 a 12
+                                        fontSize: 12,
                                       ),
                                       textAlign: TextAlign.center,
-                                      maxLines: 1, // Asegurar una sola línea
-                                      overflow: TextOverflow.ellipsis, // Truncar si es necesario
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
@@ -155,86 +155,6 @@ class HomePage extends GetView<HomeController> {
               ),
 
               const Spacer(),
-
-              // Hero content section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Main title with stunning typography
-                    ShaderMask(
-                      shaderCallback: (Rect bounds) {
-                        return const LinearGradient(
-                          colors: [Colors.white, Color(0xFFE2E8F0)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ).createShader(bounds);
-                      },
-                      child: Text(
-                        AppStrings.welcome,
-                        style: const TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w900,
-                          height: 1.1,
-                          letterSpacing: -0.5,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        AppStrings.discover,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.95),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 48),
-
-                    // Premium action buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildPremiumButton(
-                            'Negocios',
-                            Icons.storefront_rounded,
-                                () => controller.goToEmprendimientos(),
-                            isOutlined: true,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildPremiumButton(
-                            AppStrings.servicios,
-                            Icons.room_service_rounded,
-                                () => controller.goToServicios(),
-                            isOutlined: false,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 40),
 
               // Premium bottom navigation
               Container(
@@ -277,28 +197,28 @@ class HomePage extends GetView<HomeController> {
                           AppStrings.home,
                           0,
                           controller.selectedBottomNavIndex.value == 0,
-                              () => controller.changeBottomNav(0),
+                          () => controller.changeBottomNav(0),
                         ),
                         _buildNavItem(
-                          Icons.camera_alt_rounded,
-                          AppStrings.ar,
+                          Icons.photo_library_rounded,
+                          'Fotos',
                           1,
                           controller.selectedBottomNavIndex.value == 1,
-                              () => controller.changeBottomNav(1),
+                          () => controller.changeBottomNav(1),
                         ),
                         _buildNavItem(
                           Icons.settings_rounded,
                           AppStrings.settings,
                           2,
                           controller.selectedBottomNavIndex.value == 2,
-                              () => controller.changeBottomNav(2),
+                          () => controller.changeBottomNav(2),
                         ),
                         _buildNavItem(
                           Icons.person_rounded,
                           'Perfil',
                           3,
                           controller.selectedBottomNavIndex.value == 3,
-                              () => Get.toNamed(AppRoutes.LOGIN),
+                          () => Get.toNamed(AppRoutes.LOGIN),
                         ),
                       ],
                     )),
@@ -312,92 +232,22 @@ class HomePage extends GetView<HomeController> {
     );
   }
 
-  Widget _buildPremiumButton(
-      String text,
-      IconData icon,
-      VoidCallback onPressed, {
-        bool isOutlined = false,
-      }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        gradient: isOutlined
-            ? null
-            : const LinearGradient(
-          colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isOutlined
-                ? Colors.white.withOpacity(0.1)
-                : const Color(0xFF667EEA).withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(25),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(25),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              border: isOutlined
-                  ? Border.all(
-                color: Colors.white.withOpacity(0.8),
-                width: 2,
-              )
-                  : null,
-              gradient: isOutlined
-                  ? LinearGradient(
-                colors: [
-                  Colors.white.withOpacity(0.1),
-                  Colors.white.withOpacity(0.05),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-                  : null,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  void _onTabSelected(int index) {
+    if (index == 0) { // Resumen
+      controller.loadMunicipalidadInfo();
+      Get.toNamed('/municipalidad');
+    } else {
+      controller.changeTab(index);
+    }
   }
 
   Widget _buildNavItem(
-      IconData icon,
-      String label,
-      int index,
-      bool isSelected,
-      VoidCallback onTap,
-      ) {
+    IconData icon,
+    String label,
+    int index,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

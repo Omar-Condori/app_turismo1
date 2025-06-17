@@ -36,6 +36,7 @@ dependencies:
 
   # Iconos
   cupertino_icons: ^1.0.6
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +49,9 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/images/banners/
+    - assets/images/historia/
+    - assets/images/comunidades/
 
   fonts:
     - family: Roboto
