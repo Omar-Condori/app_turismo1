@@ -303,7 +303,7 @@ class HomePage extends GetView<HomeController> {
                           AppStrings.settings,
                           2,
                           controller.selectedBottomNavIndex.value == 2,
-                              () => controller.changeBottomNav(2),
+                              () => Get.toNamed(AppRoutes.SETTINGS),
                         ),
                         _buildNavItem(
                           Icons.person_rounded,
