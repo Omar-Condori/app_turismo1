@@ -156,7 +156,7 @@ class HomePage extends GetView<HomeController> {
 
               const Spacer(),
 
-              // Botones de servicios y negocios
+              // Botones de servicios y planes
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -194,7 +194,7 @@ class HomePage extends GetView<HomeController> {
 
                     const SizedBox(width: 12),
 
-                    // Botón de negocios
+                    // Botón de planes
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -214,7 +214,7 @@ class HomePage extends GetView<HomeController> {
                         ),
                         child: ElevatedButton(
                           onPressed: () {
-                            // Aquí puedes agregar la lógica para el botón de negocios
+                            // Aquí puedes agregar la lógica para el botón de planes
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
@@ -227,10 +227,10 @@ class HomePage extends GetView<HomeController> {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.business, color: Colors.white),
+                              Icon(Icons.layers, color: Colors.white),
                               SizedBox(width: 8),
                               Text(
-                                'Negocios',
+                                'Planes',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
