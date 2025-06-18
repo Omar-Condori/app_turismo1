@@ -213,9 +213,7 @@ class HomePage extends GetView<HomeController> {
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () {
-                            // Aquí puedes agregar la lógica para el botón de planes
-                          },
+                          onPressed: () => Get.toNamed(AppRoutes.PLANES),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,

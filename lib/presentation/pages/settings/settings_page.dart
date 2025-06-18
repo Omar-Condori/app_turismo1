@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
+
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool isDarkMode = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFF8F9FA),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -95,31 +102,41 @@ class SettingsPage extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
+                _buildSectionTitle('Appearance'),
+                // Elemento del modo noche/día
+                _buildDarkModeToggle(),
+
+                const SizedBox(height: 20),
                 _buildSectionTitle('Navigation'),
                 _SettingsItem(
                   icon: Icons.home,
                   label: 'Home',
                   color: const Color(0xFF2E7D32),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.card_travel,
                   label: 'Tours',
                   color: const Color(0xFF1976D2),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.calendar_month,
                   label: 'Hotels',
                   color: const Color(0xFF7B1FA2),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.location_on,
                   label: 'Maps',
                   color: const Color(0xFFD32F2F),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.image,
                   label: 'Images',
                   color: const Color(0xFFFF6F00),
+                  isDarkMode: isDarkMode,
                 ),
 
                 const SizedBox(height: 20),
@@ -128,21 +145,25 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.language,
                   label: 'Language',
                   color: const Color(0xFF388E3C),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.download,
                   label: 'Offline Guide',
                   color: const Color(0xFF5D4037),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.description,
                   label: 'More Visitor\'s Guides!',
                   color: const Color(0xFF303F9F),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.shopping_cart,
                   label: 'Restore Purchases',
                   color: const Color(0xFFF57C00),
+                  isDarkMode: isDarkMode,
                 ),
 
                 const SizedBox(height: 20),
@@ -151,11 +172,13 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.info_outline,
                   label: 'About',
                   color: const Color(0xFF455A64),
+                  isDarkMode: isDarkMode,
                 ),
                 _SettingsItem(
                   icon: Icons.mail_outline,
                   label: 'Contact us',
                   color: const Color(0xFF00796B),
+                  isDarkMode: isDarkMode,
                 ),
 
                 const SizedBox(height: 20),
@@ -165,6 +188,7 @@ class SettingsPage extends StatelessWidget {
                   label: 'Login',
                   color: const Color(0xFF1565C0),
                   isLogin: true,
+                  isDarkMode: isDarkMode,
                 ),
                 const SizedBox(height: 20),
               ],
@@ -183,8 +207,103 @@ class SettingsPage extends StatelessWidget {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: Colors.grey[600],
+          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
           letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDarkModeToggle() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDarkMode
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDarkMode
+                    ? Colors.orange.withOpacity(0.1)
+                    : Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                size: 24,
+                color: isDarkMode ? Colors.orange : Colors.blue,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                isDarkMode ? 'Dark Mode' : 'Light Mode',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                ),
+              ),
+            ),
+            // Switch estilo iPhone
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isDarkMode = !isDarkMode;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 52,
+                height: 32,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: isDarkMode ? Colors.green : Colors.grey[300],
+                ),
+                child: Stack(
+                  children: [
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeIn,
+                      top: 2,
+                      left: isDarkMode ? 22 : 2,
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -196,12 +315,14 @@ class _SettingsItem extends StatelessWidget {
   final String label;
   final Color color;
   final bool isLogin;
+  final bool isDarkMode;
 
   const _SettingsItem({
     required this.icon,
     required this.label,
     this.color = Colors.black87,
     this.isLogin = false,
+    this.isDarkMode = false,
   });
 
   @override
@@ -209,11 +330,13 @@ class _SettingsItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: isDarkMode
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -261,14 +384,14 @@ class _SettingsItem extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey[800],
+                      color: isDarkMode ? Colors.grey[200] : Colors.grey[800],
                     ),
                   ),
                 ),
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: Colors.grey[400],
+                  color: isDarkMode ? Colors.grey[500] : Colors.grey[400],
                 ),
               ],
             ),

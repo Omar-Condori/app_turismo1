@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
+import '../../bindings/planes_binding.dart';
 import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/home/municipalidad_page.dart';
+import '../../presentation/pages/home/planes_page.dart';
 import '../../presentation/pages/home/servicios_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
@@ -45,6 +47,11 @@ class AppPages {
       name: AppRoutes.EVENTOS,
       page: () => EventosPage(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.PLANES,
+      page: () => PlanesPage(),
+      binding: PlanesBinding(),
     ),
   ];
 }
