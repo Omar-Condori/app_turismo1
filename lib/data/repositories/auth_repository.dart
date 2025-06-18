@@ -28,9 +28,31 @@ class AuthRepository {
     }
   }
 
-  Future<UserModel> signUp(String name, String email, String password) async {
+  Future<UserModel> signUp(
+    String name, 
+    String email, 
+    String password, {
+    String? phone,
+    String? country,
+    String? birthDate,
+    String? address,
+    String? gender,
+    String? preferredLanguage,
+    String? fotoPerfil,
+  }) async {
     try {
-      final user = await _authProvider.signUp(name, email, password);
+      final user = await _authProvider.signUp(
+        name, 
+        email, 
+        password,
+        phone: phone,
+        country: country,
+        birthDate: birthDate,
+        address: address,
+        gender: gender,
+        preferredLanguage: preferredLanguage,
+        fotoPerfil: fotoPerfil,
+      );
       await _storageService.saveUser(user);
       return user;
     } catch (e) {

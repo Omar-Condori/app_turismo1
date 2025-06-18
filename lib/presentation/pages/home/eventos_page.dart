@@ -10,6 +10,7 @@ import '../../../core/constants/app_colors.dart';
 class EventosPage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
+    controller.loadEventos();
     return Scaffold(
       appBar: CustomAppBar(
         title: AppStrings.eventos,

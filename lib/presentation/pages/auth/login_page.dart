@@ -425,7 +425,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.grey[350],
             fontSize: 16,
           ),
           prefixIcon: Icon(

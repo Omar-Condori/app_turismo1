@@ -41,22 +41,19 @@ class TourismRepository {
   }
 
   Future<List<EmprendimientoModel>> searchEmprendimientos(String query) async {
-    try {
-      final emprendimientos = await getEmprendimientos();
-      return emprendimientos
-          .where((e) => e.name.toLowerCase().contains(query.toLowerCase()) ||
-          e.description.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    } catch (e) {
-      rethrow;
-    }
+    if (query.isEmpty) return [];
+    final emprendimientos = await getEmprendimientos();
+    return emprendimientos
+        .where((e) => e.name.toLowerCase().contains(query.toLowerCase()) ||
+        e.description.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<List<ServicioModel>> getServiciosByCategory(String category) async {
     try {
       final servicios = await getServicios();
       return servicios.where((s) => 
-        s.categorias.any((c) => c['nombre']?.toLowerCase() == category.toLowerCase())
+        (s.categorias?.any((c) => (c['nombre']?.toLowerCase() ?? '') == category.toLowerCase()) ?? false)
       ).toList();
     } catch (e) {
       rethrow;
@@ -64,27 +61,21 @@ class TourismRepository {
   }
 
   Future<List<ServicioModel>> searchServicios(String query) async {
-    try {
-      final servicios = await getServicios();
-      return servicios
-          .where((s) => s.nombre.toLowerCase().contains(query.toLowerCase()) ||
-              s.descripcion.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    } catch (e) {
-      rethrow;
-    }
+    if (query.isEmpty) return [];
+    final servicios = await getServicios();
+    return servicios
+        .where((s) => (s.nombre?.toLowerCase() ?? '').contains(query.toLowerCase()) ||
+            (s.descripcion?.toLowerCase() ?? '').contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<List<EventoModel>> searchEventos(String query) async {
-    try {
-      final eventos = await getEventos();
-      return eventos
-          .where((e) => e.name.toLowerCase().contains(query.toLowerCase()) ||
-              e.description.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    } catch (e) {
-      rethrow;
-    }
+    if (query.isEmpty) return [];
+    final eventos = await getEventos();
+    return eventos
+        .where((e) => e.name.toLowerCase().contains(query.toLowerCase()) ||
+            e.description.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<List<EventoModel>> getUpcomingEventos() async {

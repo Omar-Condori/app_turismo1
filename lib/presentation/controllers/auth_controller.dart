@@ -11,6 +11,13 @@ class AuthController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final countryController = TextEditingController();
+  final birthDateController = TextEditingController();
+  final addressController = TextEditingController();
+  final genderController = TextEditingController();
+  final preferredLanguageController = TextEditingController();
+  final fotoPerfilController = TextEditingController();
 
   final RxBool isLoading = false.obs;
   final RxBool isPasswordVisible = false.obs;
@@ -24,6 +31,13 @@ class AuthController extends GetxController {
     passwordController.dispose();
     confirmPasswordController.dispose();
     nameController.dispose();
+    phoneController.dispose();
+    countryController.dispose();
+    birthDateController.dispose();
+    addressController.dispose();
+    genderController.dispose();
+    preferredLanguageController.dispose();
+    fotoPerfilController.dispose();
     super.onClose();
   }
 
@@ -97,7 +111,22 @@ class AuthController extends GetxController {
         nameController.text.trim(),
         emailController.text.trim(),
         passwordController.text,
+        phone: phoneController.text.trim(),
+        country: countryController.text.trim(),
+        birthDate: birthDateController.text.trim(),
+        address: addressController.text.trim(),
+        gender: genderController.text.trim(),
+        preferredLanguage: preferredLanguageController.text.trim(),
+        fotoPerfil: fotoPerfilController.text.trim(),
       );
+      Get.snackbar('¡Registro exitoso!', 'Bienvenido/a a la app.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      );
+      await Future.delayed(const Duration(seconds: 2));
       Get.offAllNamed(AppRoutes.HOME);
     } catch (e) {
       Get.snackbar('Error', 'Error al registrarse: ${e.toString()}');

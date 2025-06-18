@@ -12,6 +12,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
 
   # Estado y navegación
   get: ^4.6.6
@@ -24,7 +27,6 @@ dependencies:
   shared_preferences: ^2.2.2
 
   # Utilidades
-  intl: ^0.18.1
 
   # UI y multimedia
   cached_network_image: ^3.3.0

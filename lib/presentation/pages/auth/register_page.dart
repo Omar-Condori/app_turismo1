@@ -29,6 +29,17 @@ class _RegisterPageState extends State<RegisterPage> {
     AppAssets.logoCapachica,
   ];
 
+  // Listas estáticas para selectores
+  final List<String> paises = [
+    'Perú', 'Argentina', 'Bolivia', 'Brasil', 'Chile', 'Colombia', 'Ecuador', 'España', 'México', 'Estados Unidos', 'Francia', 'Italia', 'Alemania', 'Japón', 'China', 'India', 'Canadá', 'Australia', 'Reino Unido',
+  ];
+  final List<String> generos = ['Masculino', 'Femenino', 'Otro'];
+  final List<String> idiomas = ['Español', 'Inglés', 'Francés', 'Portugués', 'Alemán', 'Italiano', 'Chino', 'Japonés', 'Quechua', 'Aymara'];
+
+  String? paisSeleccionado;
+  String? generoSeleccionado;
+  String? idiomaSeleccionado;
+
   void _startAutoSlider() {
     _timer = Timer.periodic(Duration(seconds: 4), (timer) {
       if (_currentPage.value < sliderImages.length - 1) {
@@ -360,6 +371,141 @@ class _RegisterPageState extends State<RegisterPage> {
                                         },
                                       )),
 
+                                      const SizedBox(height: 16),
+
+                                      // Campo de teléfono
+                                      _buildGlassTextField(
+                                        controller: controller.phoneController,
+                                        hintText: 'Teléfono',
+                                        icon: Icons.phone_outlined,
+                                        keyboardType: TextInputType.phone,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Campo requerido';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+
+                                      const SizedBox(height: 16),
+
+                                      // Campo de país (dropdown)
+                                      DropdownButtonFormField<String>(
+                                        value: paisSeleccionado,
+                                        items: paises.map((pais) => DropdownMenuItem(value: pais, child: Text(pais))).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            paisSeleccionado = value;
+                                            controller.countryController.text = value ?? '';
+                                          });
+                                        },
+                                      ),
+
+                                      const SizedBox(height: 16),
+
+                                      // Campo de fecha de nacimiento (date picker)
+                                      TextFormField(
+                                        controller: controller.birthDateController,
+                                        readOnly: true,
+                                        onTap: () async {
+                                          DateTime? picked = await showDatePicker(
+                                            context: context,
+                                            initialDate: DateTime(2000),
+                                            firstDate: DateTime(1900),
+                                            lastDate: DateTime.now(),
+                                            locale: const Locale('es', ''),
+                                          );
+                                          if (picked != null) {
+                                            controller.birthDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                                          }
+                                        },
+                                        decoration: InputDecoration(
+                                          hintText: 'Selecciona tu fecha de nacimiento',
+                                          hintStyle: TextStyle(color: Colors.grey[350]),
+                                          prefixIcon: Icon(Icons.calendar_today_outlined, color: Colors.white.withOpacity(0.8)),
+                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                                          filled: true,
+                                          fillColor: Colors.white.withOpacity(0.1),
+                                        ),
+                                        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+                                      ),
+
+                                      const SizedBox(height: 16),
+
+                                      // Campo de género (dropdown)
+                                      DropdownButtonFormField<String>(
+                                        value: generoSeleccionado,
+                                        items: generos.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            generoSeleccionado = value;
+                                            controller.genderController.text = value ?? '';
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          hintText: 'Selecciona tu género',
+                                          hintStyle: TextStyle(color: Colors.grey[350]),
+                                          prefixIcon: Icon(Icons.person_outline, color: Colors.white.withOpacity(0.8)),
+                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                                          filled: true,
+                                          fillColor: Colors.white.withOpacity(0.1),
+                                        ),
+                                        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+                                      ),
+
+                                      const SizedBox(height: 16),
+
+                                      // Campo de idioma preferido (dropdown)
+                                      DropdownButtonFormField<String>(
+                                        value: idiomaSeleccionado,
+                                        items: idiomas.map((idioma) => DropdownMenuItem(value: idioma, child: Text(idioma))).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            idiomaSeleccionado = value;
+                                            controller.preferredLanguageController.text = value ?? '';
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          hintText: 'Selecciona tu idioma',
+                                          hintStyle: TextStyle(color: Colors.grey[350]),
+                                          prefixIcon: Icon(Icons.language_outlined, color: Colors.white.withOpacity(0.8)),
+                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                                          filled: true,
+                                          fillColor: Colors.white.withOpacity(0.1),
+                                        ),
+                                        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+                                      ),
+
+                                      const SizedBox(height: 16),
+
+                                      // Campo de dirección
+                                      _buildGlassTextField(
+                                        controller: controller.addressController,
+                                        hintText: 'Dirección',
+                                        icon: Icons.location_on_outlined,
+                                        keyboardType: TextInputType.streetAddress,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Campo requerido';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+
+                                      const SizedBox(height: 16),
+
+                                      // Campo de foto de perfil
+                                      _buildGlassTextField(
+                                        controller: controller.fotoPerfilController,
+                                        hintText: 'Foto de perfil (URL)',
+                                        icon: Icons.photo_camera_outlined,
+                                        keyboardType: TextInputType.url,
+                                        validator: (value) {
+                                          // Campo opcional
+                                          return null;
+                                        },
+                                      ),
+
                                       const SizedBox(height: 24),
 
                                       // Botón de registrarse
@@ -374,16 +520,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                       )),
 
                                       const SizedBox(height: 16),
-
-                                      // Botón de Google
-                                      _buildGlassButton(
-                                        onPressed: controller.signInWithGoogle,
-                                        text: 'Continuar con Google',
-                                        icon: Icons.g_mobiledata_rounded,
-                                        isPrimary: false,
-                                      ),
-
-                                      const SizedBox(height: 20),
 
                                       // Enlace de login
                                       Row(
@@ -470,7 +606,7 @@ class _RegisterPageState extends State<RegisterPage> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.grey[350],
             fontSize: 16,
           ),
           prefixIcon: Icon(

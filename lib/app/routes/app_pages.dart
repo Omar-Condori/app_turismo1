@@ -5,6 +5,7 @@ import '../../presentation/pages/home/servicios_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/settings/settings_page.dart';
+import '../../presentation/pages/home/eventos_page.dart';
 import '../../bindings/auth_binding.dart';
 import '../../bindings/home_binding.dart';
 import 'app_routes.dart';
@@ -39,6 +40,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.SETTINGS,
       page: () => const SettingsPage(),
+    ),
+    GetPage(
+      name: AppRoutes.EVENTOS,
+      page: () => EventosPage(),
+      binding: HomeBinding(),
     ),
   ];
 }

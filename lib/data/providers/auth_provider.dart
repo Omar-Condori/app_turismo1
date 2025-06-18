@@ -45,23 +45,70 @@ class AuthProvider {
     }
   }
 
-  Future<UserModel> signUp(String name, String email, String password) async {
+  Future<UserModel> signUp(
+    String name, 
+    String email, 
+    String password, {
+    String? phone,
+    String? country,
+    String? birthDate,
+    String? address,
+    String? gender,
+    String? preferredLanguage,
+    String? fotoPerfil,
+  }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/signup'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'name': name,
-          'email': email,
-          'password': password,
-        }),
+      // Crear request multipart/form-data
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://127.0.0.1:8000/api/register'),
       );
 
-      if (response.statusCode == 201) {
+      // Agregar headers
+      request.headers['Accept'] = 'application/json';
+
+      // Agregar campos de texto
+      request.fields['name'] = name;
+      request.fields['email'] = email;
+      request.fields['password'] = password;
+      request.fields['password_confirmation'] = password; // Usar la misma contraseña
+      
+      // Agregar campos opcionales
+      if (phone != null && phone.isNotEmpty) {
+        request.fields['phone'] = phone;
+      }
+      if (country != null && country.isNotEmpty) {
+        request.fields['country'] = country;
+      }
+      if (birthDate != null && birthDate.isNotEmpty) {
+        request.fields['birth_date'] = birthDate;
+      }
+      if (address != null && address.isNotEmpty) {
+        request.fields['address'] = address;
+      }
+      if (gender != null && gender.isNotEmpty) {
+        request.fields['gender'] = gender;
+      }
+      if (preferredLanguage != null && preferredLanguage.isNotEmpty) {
+        request.fields['preferred_language'] = preferredLanguage;
+      }
+
+      // Agregar archivo de foto si existe
+      if (fotoPerfil != null && fotoPerfil.isNotEmpty) {
+        // Por ahora solo enviamos el nombre del archivo
+        // En una implementación real, aquí se enviaría el archivo real
+        request.fields['foto_perfil'] = fotoPerfil;
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return UserModel.fromJson(data['user']);
+        return UserModel.fromJson(data['user'] ?? data);
       } else {
-        throw Exception('Error al registrarse');
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['message'] ?? 'Error al registrarse');
       }
     } catch (e) {
       throw Exception('Error de conexión: $e');

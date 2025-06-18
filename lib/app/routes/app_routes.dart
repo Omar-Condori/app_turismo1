@@ -5,4 +5,5 @@ class AppRoutes {
   static const String MUNICIPALIDAD = '/municipalidad';
   static const String SERVICIOS = '/servicios';
   static const String SETTINGS = '/settings';
+  static const String EVENTOS = '/eventos';
 }

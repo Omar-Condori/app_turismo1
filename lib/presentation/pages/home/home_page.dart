@@ -164,7 +164,7 @@ class HomePage extends GetView<HomeController> {
                     // Botón de servicios (reducido)
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => controller.goToServicios(),
+                        onPressed: () => Get.toNamed(AppRoutes.SERVICIOS),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: const Color(0xFF2D3748),
@@ -328,6 +328,11 @@ class HomePage extends GetView<HomeController> {
     if (index == 0) { // Resumen
       controller.loadMunicipalidadInfo();
       Get.toNamed('/municipalidad');
+    } else if (index == 2) { // Servicios
+      Get.toNamed(AppRoutes.SERVICIOS);
+    } else if (index == 3) { // Eventos
+      controller.loadEventos();
+      Get.toNamed('/eventos');
     } else {
       controller.changeTab(index);
     }

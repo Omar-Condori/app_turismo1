@@ -10,6 +10,7 @@ import '../../../core/constants/app_colors.dart';
 class ServiciosPage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
+    controller.loadServicios();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -162,7 +163,7 @@ class ServiciosPage extends GetView<HomeController> {
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: ServicioCard(
                             servicio: servicio,
-                            onTap: () => controller.goToServicioDetail(servicio.id),
+                            onTap: () => controller.goToServicioDetail(servicio.id ?? 0),
                           ),
                         );
                       },
