@@ -273,6 +273,7 @@ class _LoginPageState extends State<LoginPage> {
                                       _buildGlassTextField(
                                         controller: controller.emailController,
                                         hintText: 'Correo electrónico',
+                                        exampleText: 'usuario@ejemplo.com',
                                         icon: Icons.email_outlined,
                                         keyboardType: TextInputType.emailAddress,
                                         validator: (value) {
@@ -292,6 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                                       Obx(() => _buildGlassTextField(
                                         controller: controller.passwordController,
                                         hintText: 'Contraseña',
+                                        exampleText: 'Ingresa tu contraseña',
                                         icon: Icons.lock_outline,
                                         obscureText: !controller.isPasswordVisible.value,
                                         suffixIcon: IconButton(
@@ -300,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
                                             controller.isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
-                                            color: Colors.black87,
+                                            color: Colors.black54,
                                             size: 20,
                                           ),
                                         ),
@@ -330,11 +332,44 @@ class _LoginPageState extends State<LoginPage> {
 
                                       const SizedBox(height: 16),
 
+                                      // Botón de recuperar contraseña
+                                      GestureDetector(
+                                        onTap: () {
+                                          // Implementación temporal - puedes cambiar esto por el método correcto
+                                          Get.snackbar(
+                                            'Recuperar contraseña',
+                                            'Funcionalidad en desarrollo',
+                                            backgroundColor: Colors.white.withOpacity(0.9),
+                                            colorText: Colors.black87,
+                                            snackPosition: SnackPosition.TOP,
+                                            margin: EdgeInsets.all(20),
+                                            borderRadius: 10,
+                                          );
+                                          // Alternativa: controller.goToForgotPassword() cuando exista
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          child: Text(
+                                            '¿Olvidaste tu contraseña?',
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.9),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                              decoration: TextDecoration.underline,
+                                              decorationColor: Colors.white.withOpacity(0.7),
+                                              decorationThickness: 1.5,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 16),
+
                                       // Botón de Google
                                       _buildGlassButton(
                                         onPressed: controller.signInWithGoogle,
                                         text: 'Continuar con Google',
-                                        icon: Icons.g_mobiledata_rounded,
+                                        customIcon: _buildGoogleIcon(),
                                         isPrimary: false,
                                       ),
 
@@ -386,9 +421,37 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget _buildGoogleIcon() {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+      ),
+      child: ClipOval(
+        child: Image.network(
+          'https://developers.google.com/identity/images/g-logo.png',
+          width: 18,
+          height: 18,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback en caso de error al cargar la imagen
+            return Icon(
+              Icons.g_mobiledata_rounded,
+              color: Color(0xFF4285F4),
+              size: 18,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildGlassTextField({
     required TextEditingController controller,
     required String hintText,
+    required String exampleText,
     required IconData icon,
     TextInputType? keyboardType,
     bool obscureText = false,
@@ -399,8 +462,8 @@ class _LoginPageState extends State<LoginPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.1),
+            Colors.white.withOpacity(0.85), // Fondo menos blanco
+            Colors.white.withOpacity(0.75), // Fondo menos blanco
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -410,48 +473,61 @@ class _LoginPageState extends State<LoginPage> {
           color: Colors.white.withOpacity(0.3),
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
         validator: validator,
-        cursorColor: Color(0xFF2C3E50),
+        cursorColor: Colors.black87, // Cursor negro
+        cursorWidth: 2,
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.black87, // Texto negro
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: exampleText, // Ejemplo como placeholder
           hintStyle: TextStyle(
-            color: Colors.grey[350],
+            color: Colors.black45, // Hint gris oscuro
             fontSize: 16,
           ),
           prefixIcon: Icon(
             icon,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.black54,
             size: 20,
           ),
           suffixIcon: suffixIcon,
+          errorStyle: TextStyle(
+            color: Color(0xFFFF6B6B),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(
-              color: Color(0xFF2C3E50),
+              color: Color(0xFFFF6B6B),
               width: 1.5,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(
-              color: Color(0xFF2C3E50),
+              color: Color(0xFFFF6B6B),
               width: 2,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(
-              color: Color(0xFF2C3E50),
+              color: Colors.black54,
               width: 2,
             ),
           ),
@@ -477,6 +553,7 @@ class _LoginPageState extends State<LoginPage> {
     required VoidCallback? onPressed,
     required String text,
     IconData? icon,
+    Widget? customIcon,
     bool isPrimary = true,
   }) {
     return Container(
@@ -524,7 +601,10 @@ class _LoginPageState extends State<LoginPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (icon != null) ...[
+                if (customIcon != null) ...[
+                  customIcon,
+                  const SizedBox(width: 8),
+                ] else if (icon != null) ...[
                   Icon(
                     icon,
                     color: Colors.white,

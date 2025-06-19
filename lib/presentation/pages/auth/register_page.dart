@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
-import '../../controllers/auth_controller.dart';
-import '../../widgets/common/custom_text_field.dart';
-import '../../widgets/common/custom_button.dart';
-import '../../widgets/auth/social_login_button.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../core/constants/app_assets.dart';
-import '../../../core/constants/app_colors.dart';
+// import '../../controllers/auth_controller.dart';
+// import '../../widgets/common/custom_text_field.dart';
+// import '../../widgets/common/custom_button.dart';
+// import '../../widgets/auth/social_login_button.dart';
+// import '../../../core/constants/app_strings.dart';
+// import '../../../core/constants/app_assets.dart';
+// import '../../../core/constants/app_colors.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -19,14 +19,27 @@ class _RegisterPageState extends State<RegisterPage> {
   final RxInt _currentPage = 0.obs;
   Timer? _timer;
 
-  // Obtener el controller
-  AuthController get controller => Get.find<AuthController>();
+  // Controllers de ejemplo (reemplaza con tu AuthController)
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final phoneController = TextEditingController();
+  final countryController = TextEditingController();
+  final birthDateController = TextEditingController();
+  final genderController = TextEditingController();
+  final preferredLanguageController = TextEditingController();
+  final addressController = TextEditingController();
+  final fotoPerfilController = TextEditingController();
+  final registerFormKey = GlobalKey<FormState>();
+  final RxBool isPasswordVisible = false.obs;
+  final RxBool isLoading = false.obs;
 
-  // Lista de imágenes para el slider
+  // Lista de imágenes para el slider (usando placeholders)
   final List<String> sliderImages = [
-    AppAssets.capachicaView1,
-    AppAssets.capachicaView2,
-    AppAssets.logoCapachica,
+    'https://picsum.photos/800/1200?random=1',
+    'https://picsum.photos/800/1200?random=2',
+    'https://picsum.photos/800/1200?random=3',
   ];
 
   // Listas estáticas para selectores
@@ -58,6 +71,37 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+  void togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
+  void signUpWithEmail() {
+    if (registerFormKey.currentState!.validate()) {
+      isLoading.value = true;
+      // Simular carga
+      Future.delayed(Duration(seconds: 2), () {
+        isLoading.value = false;
+        // Lógica de registro aquí
+      });
+    }
+  }
+
+  void goToHome() {
+    // Navegación al home
+    Get.offAllNamed('/home');
+  }
+
+  void goToLogin() {
+    // Navegación al login
+    Get.offAllNamed('/login');
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Iniciar el slider automático
@@ -68,7 +112,6 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     return Scaffold(
-      // Permitir que se ajuste al teclado
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -84,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 return Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(sliderImages[index]),
+                      image: NetworkImage(sliderImages[index]),
                       fit: BoxFit.cover,
                       filterQuality: FilterQuality.high,
                     ),
@@ -158,7 +201,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: controller.goToHome,
+                              onTap: goToHome,
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Icon(
@@ -191,8 +234,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       )),
 
-                      // Espacio vacío donde estaba el botón de login
-                      SizedBox(width: 48),
+                      // Espaciado
+                      SizedBox(width: 44),
                     ],
                   ),
                 ),
@@ -243,7 +286,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(28),
                                 child: Form(
-                                  key: controller.registerFormKey,
+                                  key: registerFormKey,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -278,11 +321,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                         ),
                                       ),
 
-                                      const SizedBox(height: 28),
+                                      const SizedBox(height: 32),
 
-                                      // Campo de nombre completo
-                                      _buildGlassTextField(
-                                        controller: controller.nameController,
+                                      // Campo de nombre completo con bordes redondeados
+                                      _buildModernTextField(
+                                        controller: nameController,
                                         hintText: 'Nombre completo',
                                         icon: Icons.person_outline,
                                         keyboardType: TextInputType.name,
@@ -296,10 +339,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       const SizedBox(height: 16),
 
-                                      // Campo de email
-                                      _buildGlassTextField(
-                                        controller: controller.emailController,
-                                        hintText: 'Correo electrónico',
+                                      // Campo de email con bordes redondeados
+                                      _buildModernTextField(
+                                        controller: emailController,
+                                        hintText: 'usuario@ejemplo.com',
                                         icon: Icons.email_outlined,
                                         keyboardType: TextInputType.emailAddress,
                                         validator: (value) {
@@ -315,19 +358,19 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       const SizedBox(height: 16),
 
-                                      // Campo de contraseña
-                                      Obx(() => _buildGlassTextField(
-                                        controller: controller.passwordController,
+                                      // Campo de contraseña con bordes redondeados
+                                      Obx(() => _buildModernTextField(
+                                        controller: passwordController,
                                         hintText: 'Contraseña',
                                         icon: Icons.lock_outline,
-                                        obscureText: !controller.isPasswordVisible.value,
+                                        obscureText: !isPasswordVisible.value,
                                         suffixIcon: IconButton(
-                                          onPressed: controller.togglePasswordVisibility,
+                                          onPressed: togglePasswordVisibility,
                                           icon: Icon(
-                                            controller.isPasswordVisible.value
+                                            isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
-                                            color: Colors.black87,
+                                            color: Colors.grey[600],
                                             size: 20,
                                           ),
                                         ),
@@ -345,18 +388,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                       const SizedBox(height: 16),
 
                                       // Campo de confirmar contraseña
-                                      Obx(() => _buildGlassTextField(
-                                        controller: controller.confirmPasswordController,
+                                      Obx(() => _buildModernTextField(
+                                        controller: confirmPasswordController,
                                         hintText: 'Confirmar contraseña',
                                         icon: Icons.lock_outline,
-                                        obscureText: !controller.isPasswordVisible.value,
+                                        obscureText: !isPasswordVisible.value,
                                         suffixIcon: IconButton(
-                                          onPressed: controller.togglePasswordVisibility,
+                                          onPressed: togglePasswordVisibility,
                                           icon: Icon(
-                                            controller.isPasswordVisible.value
+                                            isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
-                                            color: Colors.black87,
+                                            color: Colors.grey[600],
                                             size: 20,
                                           ),
                                         ),
@@ -364,7 +407,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           if (value == null || value.isEmpty) {
                                             return 'Campo requerido';
                                           }
-                                          if (value != controller.passwordController.text) {
+                                          if (value != passwordController.text) {
                                             return 'Las contraseñas no coinciden';
                                           }
                                           return null;
@@ -374,9 +417,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                       const SizedBox(height: 16),
 
                                       // Campo de teléfono
-                                      _buildGlassTextField(
-                                        controller: controller.phoneController,
-                                        hintText: 'Teléfono',
+                                      _buildModernTextField(
+                                        controller: phoneController,
+                                        hintText: '+51 999 999 999',
                                         icon: Icons.phone_outlined,
                                         keyboardType: TextInputType.phone,
                                         validator: (value) {
@@ -389,23 +432,31 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       const SizedBox(height: 16),
 
-                                      // Campo de país (dropdown)
-                                      DropdownButtonFormField<String>(
+                                      // Campo de país (dropdown con bordes redondeados)
+                                      _buildModernDropdown<String>(
                                         value: paisSeleccionado,
-                                        items: paises.map((pais) => DropdownMenuItem(value: pais, child: Text(pais))).toList(),
+                                        items: paises.map((pais) => DropdownMenuItem(
+                                          value: pais,
+                                          child: Text(pais, style: TextStyle(color: Colors.grey[700])),
+                                        )).toList(),
                                         onChanged: (value) {
                                           setState(() {
                                             paisSeleccionado = value;
-                                            controller.countryController.text = value ?? '';
+                                            countryController.text = value ?? '';
                                           });
                                         },
+                                        hintText: 'Selecciona tu país',
+                                        icon: Icons.public_outlined,
+                                        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
                                       ),
 
                                       const SizedBox(height: 16),
 
-                                      // Campo de fecha de nacimiento (date picker)
-                                      TextFormField(
-                                        controller: controller.birthDateController,
+                                      // Campo de fecha de nacimiento
+                                      _buildModernTextField(
+                                        controller: birthDateController,
+                                        hintText: 'Fecha de nacimiento',
+                                        icon: Icons.calendar_today_outlined,
                                         readOnly: true,
                                         onTap: () async {
                                           DateTime? picked = await showDatePicker(
@@ -416,72 +467,58 @@ class _RegisterPageState extends State<RegisterPage> {
                                             locale: const Locale('es', ''),
                                           );
                                           if (picked != null) {
-                                            controller.birthDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                                            birthDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                                           }
                                         },
-                                        decoration: InputDecoration(
-                                          hintText: 'Selecciona tu fecha de nacimiento',
-                                          hintStyle: TextStyle(color: Colors.grey[350]),
-                                          prefixIcon: Icon(Icons.calendar_today_outlined, color: Colors.white.withOpacity(0.8)),
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-                                          filled: true,
-                                          fillColor: Colors.white.withOpacity(0.1),
-                                        ),
                                         validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
                                       ),
 
                                       const SizedBox(height: 16),
 
                                       // Campo de género (dropdown)
-                                      DropdownButtonFormField<String>(
+                                      _buildModernDropdown<String>(
                                         value: generoSeleccionado,
-                                        items: generos.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                                        items: generos.map((g) => DropdownMenuItem(
+                                          value: g,
+                                          child: Text(g, style: TextStyle(color: Colors.grey[700])),
+                                        )).toList(),
                                         onChanged: (value) {
                                           setState(() {
                                             generoSeleccionado = value;
-                                            controller.genderController.text = value ?? '';
+                                            genderController.text = value ?? '';
                                           });
                                         },
-                                        decoration: InputDecoration(
-                                          hintText: 'Selecciona tu género',
-                                          hintStyle: TextStyle(color: Colors.grey[350]),
-                                          prefixIcon: Icon(Icons.person_outline, color: Colors.white.withOpacity(0.8)),
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-                                          filled: true,
-                                          fillColor: Colors.white.withOpacity(0.1),
-                                        ),
+                                        hintText: 'Selecciona tu género',
+                                        icon: Icons.person_outline,
                                         validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
                                       ),
 
                                       const SizedBox(height: 16),
 
                                       // Campo de idioma preferido (dropdown)
-                                      DropdownButtonFormField<String>(
+                                      _buildModernDropdown<String>(
                                         value: idiomaSeleccionado,
-                                        items: idiomas.map((idioma) => DropdownMenuItem(value: idioma, child: Text(idioma))).toList(),
+                                        items: idiomas.map((idioma) => DropdownMenuItem(
+                                          value: idioma,
+                                          child: Text(idioma, style: TextStyle(color: Colors.grey[700])),
+                                        )).toList(),
                                         onChanged: (value) {
                                           setState(() {
                                             idiomaSeleccionado = value;
-                                            controller.preferredLanguageController.text = value ?? '';
+                                            preferredLanguageController.text = value ?? '';
                                           });
                                         },
-                                        decoration: InputDecoration(
-                                          hintText: 'Selecciona tu idioma',
-                                          hintStyle: TextStyle(color: Colors.grey[350]),
-                                          prefixIcon: Icon(Icons.language_outlined, color: Colors.white.withOpacity(0.8)),
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-                                          filled: true,
-                                          fillColor: Colors.white.withOpacity(0.1),
-                                        ),
+                                        hintText: 'Selecciona tu idioma',
+                                        icon: Icons.language_outlined,
                                         validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
                                       ),
 
                                       const SizedBox(height: 16),
 
                                       // Campo de dirección
-                                      _buildGlassTextField(
-                                        controller: controller.addressController,
-                                        hintText: 'Dirección',
+                                      _buildModernTextField(
+                                        controller: addressController,
+                                        hintText: 'Av. El Sol 123, Cusco',
                                         icon: Icons.location_on_outlined,
                                         keyboardType: TextInputType.streetAddress,
                                         validator: (value) {
@@ -495,9 +532,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                       const SizedBox(height: 16),
 
                                       // Campo de foto de perfil
-                                      _buildGlassTextField(
-                                        controller: controller.fotoPerfilController,
-                                        hintText: 'Foto de perfil (URL)',
+                                      _buildModernTextField(
+                                        controller: fotoPerfilController,
+                                        hintText: 'https://ejemplo.com/foto.jpg',
                                         icon: Icons.photo_camera_outlined,
                                         keyboardType: TextInputType.url,
                                         validator: (value) {
@@ -508,18 +545,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       const SizedBox(height: 24),
 
-                                      // Botón de registrarse
-                                      Obx(() => _buildGlassButton(
-                                        onPressed: controller.isLoading.value
+                                      // Botón de crear cuenta
+                                      Obx(() => _buildModernButton(
+                                        onPressed: isLoading.value
                                             ? null
-                                            : controller.signUpWithEmail,
-                                        text: controller.isLoading.value
+                                            : signUpWithEmail,
+                                        text: isLoading.value
                                             ? 'Cargando...'
                                             : 'Crear Cuenta',
                                         isPrimary: true,
                                       )),
 
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 20),
 
                                       // Enlace de login
                                       Row(
@@ -533,13 +570,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: controller.goToLogin,
-                                            child: Text(
-                                              'Iniciar Sesión',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
+                                            onTap: goToLogin,
+                                            child: ShaderMask(
+                                              shaderCallback: (bounds) => LinearGradient(
+                                                colors: [Colors.white, Color(0xFFE2E8F0)],
+                                              ).createShader(bounds),
+                                              child: Text(
+                                                'Iniciar Sesión',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -567,173 +609,229 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildGlassTextField({
+  Widget _buildModernTextField({
     required TextEditingController controller,
     required String hintText,
     required IconData icon,
     TextInputType? keyboardType,
     bool obscureText = false,
+    bool readOnly = false,
     Widget? suffixIcon,
+    VoidCallback? onTap,
     String? Function(String?)? validator,
   }) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.1),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1,
-        ),
+        color: Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
+        readOnly: readOnly,
+        onTap: onTap,
         validator: validator,
-        cursorColor: Color(0xFF2C3E50),
+        cursorColor: Color(0xFF6366F1),
+        cursorWidth: 2,
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.grey[800],
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Colors.grey[350],
+            color: Colors.grey[500],
             fontSize: 16,
           ),
-          prefixIcon: Icon(
-            icon,
-            color: Colors.white.withOpacity(0.8),
-            size: 20,
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: 12, right: 8),
+            child: Icon(
+              icon,
+              color: Colors.grey[600],
+              size: 20,
+            ),
           ),
-          suffixIcon: suffixIcon,
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+          suffixIcon: suffixIcon != null ? Container(
+            margin: EdgeInsets.only(right: 12),
+            child: suffixIcon,
+          ) : null,
+          errorStyle: TextStyle(
+            color: Color(0xFFEF4444),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
             borderSide: BorderSide(
-              color: Color(0xFF2C3E50),
-              width: 1.5,
+              color: Color(0xFF6366F1),
+              width: 2,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Color(0xFFEF4444),
+              width: 2,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(25),
             borderSide: BorderSide(
-              color: Color(0xFF2C3E50),
+              color: Color(0xFFEF4444),
               width: 2,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-              color: Color(0xFF2C3E50),
-              width: 2,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-              color: Colors.transparent,
-              width: 1,
-            ),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 18,
-          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           isDense: true,
         ),
       ),
     );
   }
 
-  Widget _buildGlassButton({
+  Widget _buildModernDropdown<T>({
+    required T? value,
+    required List<DropdownMenuItem<T>> items,
+    required void Function(T?) onChanged,
+    required String hintText,
+    required IconData icon,
+    String? Function(T?)? validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<T>(
+        value: value,
+        items: items,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.grey[500], fontSize: 16),
+          prefixIcon: Container(
+            margin: EdgeInsets.only(left: 12, right: 8),
+            child: Icon(icon, color: Colors.grey[600], size: 20),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Color(0xFF6366F1),
+              width: 2,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Color(0xFFEF4444),
+              width: 2,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(
+              color: Color(0xFFEF4444),
+              width: 2,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          isDense: true,
+          errorStyle: TextStyle(
+            color: Color(0xFFEF4444),
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        validator: validator,
+        dropdownColor: Colors.white,
+        style: TextStyle(color: Colors.grey[800], fontSize: 16, fontWeight: FontWeight.w500),
+        icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey[600]),
+      ),
+    );
+  }
+
+  Widget _buildModernButton({
     required VoidCallback? onPressed,
     required String text,
-    IconData? icon,
-    bool isPrimary = true,
+    bool isPrimary = false,
   }) {
     return Container(
       width: double.infinity,
+      height: 54,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: isPrimary
-            ? const LinearGradient(
-          colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        )
-            : LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.15),
-            Colors.white.withOpacity(0.05),
+        gradient: LinearGradient(
+          colors: isPrimary
+              ? [Color(0xFF6366F1), Color(0xFF8B5CF6)]
+              : [
+            Colors.white.withOpacity(0.2),
+            Colors.white.withOpacity(0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: isPrimary
-            ? null
-            : Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
             color: isPrimary
-                ? const Color(0xFF667EEA).withOpacity(0.3)
-                : Colors.white.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+                ? Color(0xFF6366F1).withOpacity(0.3)
+                : Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(15),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(15),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 18),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (icon != null) ...[
-                  Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                  ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onPressed,
+            child: Container(
+              alignment: Alignment.center,
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: isPrimary ? Colors.white : Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _pageController.dispose();
-    super.dispose();
   }
 }

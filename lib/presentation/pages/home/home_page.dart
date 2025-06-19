@@ -308,7 +308,7 @@ class HomePage extends GetView<HomeController> {
                           'Perfil',
                           3,
                           controller.selectedBottomNavIndex.value == 3,
-                              () => Get.toNamed(AppRoutes.LOGIN),
+                              () => _showProfileBottomSheet(context),
                         ),
                       ],
                     )),
@@ -334,6 +334,283 @@ class HomePage extends GetView<HomeController> {
     } else {
       controller.changeTab(index);
     }
+  }
+
+  void _showProfileBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white.withOpacity(0.95),
+              Colors.white.withOpacity(0.98),
+            ],
+          ),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.3),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).padding.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Logo en lugar del título
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(40),
+                  child: Image.asset(
+                    'assets/icons/img.png', // Cambia esta ruta por la correcta de tu favicon
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Widget de respaldo si no se encuentra la imagen
+                      return Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF8A00), Color(0xFFE52E71)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Icon(
+                          Icons.landscape_rounded,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              // Profile options con iconos coloreados
+              _buildProfileOption(
+                icon: Icons.login_rounded,
+                iconColor: Colors.green, // Verde para login
+                title: 'Iniciar Sesión',
+                subtitle: 'Accede a tu cuenta',
+                onTap: () {
+                  Navigator.pop(context);
+                  Get.toNamed(AppRoutes.LOGIN);
+                },
+              ),
+
+              _buildProfileOption(
+                icon: Icons.bookmark_rounded,
+                iconColor: Colors.blue, // Azul para reservas
+                title: 'Mis Reservas',
+                subtitle: 'Ver reservas activas',
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navegar a reservas
+                  Get.toNamed('/reservas');
+                },
+              ),
+
+              _buildProfileOption(
+                icon: Icons.shopping_cart_rounded,
+                iconColor: Colors.orange, // Naranja para carrito
+                title: 'Carrito',
+                subtitle: 'Ver productos seleccionados',
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navegar a carrito
+                  Get.toNamed('/carrito');
+                },
+              ),
+
+              _buildProfileOption(
+                icon: Icons.account_circle_rounded,
+                iconColor: Colors.purple, // Morado para perfil
+                title: 'Mi Perfil',
+                subtitle: 'Configurar información personal',
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navegar a perfil
+                  Get.toNamed('/perfil');
+                },
+              ),
+
+              _buildProfileOption(
+                icon: Icons.logout_rounded,
+                iconColor: Colors.red, // Rojo para logout
+                title: 'Cerrar Sesión',
+                subtitle: 'Salir de la aplicación',
+                isDestructive: true,
+                onTap: () {
+                  Navigator.pop(context);
+                  // Lógica de cerrar sesión
+                  _showLogoutDialog(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileOption({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    Color? iconColor,
+    bool isDestructive = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white.withOpacity(0.7),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: (iconColor ?? (isDestructive ? Colors.red : AppColors.primary))
+                        .withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: iconColor ?? (isDestructive ? Colors.red : AppColors.primary),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDestructive ? Colors.red : const Color(0xFF2D3748),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: Colors.grey[400],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text('Cerrar Sesión'),
+        content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Aquí implementar la lógica de cerrar sesión
+              // controller.logout();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              'Cerrar Sesión',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildNavItem(
