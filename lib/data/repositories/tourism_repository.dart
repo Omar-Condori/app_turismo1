@@ -3,6 +3,7 @@ import '../models/emprendimiento_model.dart';
 import '../models/servicio_model.dart';
 import '../models/evento_model.dart';
 import '../models/municipalidad_model.dart';
+import '../models/maps_model.dart';
 import '../../core/constants/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -113,6 +114,32 @@ class TourismRepository {
           return MunicipalidadModel.fromJson(jsonResponse['data'][0]);
         } else {
           print('No se encontraron datos válidos en la respuesta');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión: $e');
+      return null;
+    }
+  }
+
+  Future<String?> getGoogleMapsUrl() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/auth/google'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          return jsonResponse['data']['url'];
+        } else {
+          print('No se encontró la URL de Google Maps en la respuesta');
           return null;
         }
       } else {

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../bindings/planes_binding.dart';
+import '../../bindings/maps_binding.dart';
 import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/home/municipalidad_page.dart';
 import '../../presentation/pages/home/planes_page.dart';
@@ -9,6 +10,7 @@ import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/settings/settings_page.dart';
 import '../../presentation/pages/home/eventos_page.dart';
+import '../../presentation/pages/maps/maps_page.dart';
 import '../../bindings/auth_binding.dart';
 import '../../bindings/home_binding.dart';
 import 'app_routes.dart';
@@ -58,6 +60,11 @@ class AppPages {
       name: AppRoutes.EMPRENDIMIENTOS,
       page: () => EmprendimientosPage(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.MAPS,
+      page: () => MapsPage(),
+      binding: MapsBinding(),
     ),
   ];
 }

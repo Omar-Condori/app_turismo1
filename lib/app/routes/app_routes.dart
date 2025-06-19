@@ -8,4 +8,5 @@ class AppRoutes {
   static const String EVENTOS = '/eventos';
   static const String PLANES = '/planes';
   static const String EMPRENDIMIENTOS = '/emprendimientos';
+  static const String MAPS = '/maps';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -113,6 +114,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   label: 'Home',
                   color: const Color(0xFF2E7D32),
                   isDarkMode: isDarkMode,
+                  onTap: () => Get.offAllNamed('/home'),
                 ),
                 _SettingsItem(
                   icon: Icons.card_travel,
@@ -131,6 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   label: 'Maps',
                   color: const Color(0xFFD32F2F),
                   isDarkMode: isDarkMode,
+                  onTap: () => Get.toNamed('/maps'),
                 ),
                 _SettingsItem(
                   icon: Icons.image,
@@ -189,6 +192,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   color: const Color(0xFF1565C0),
                   isLogin: true,
                   isDarkMode: isDarkMode,
+                  onTap: () => Get.toNamed('/login'),
                 ),
                 const SizedBox(height: 20),
               ],
@@ -316,6 +320,7 @@ class _SettingsItem extends StatelessWidget {
   final Color color;
   final bool isLogin;
   final bool isDarkMode;
+  final VoidCallback? onTap;
 
   const _SettingsItem({
     required this.icon,
@@ -323,6 +328,7 @@ class _SettingsItem extends StatelessWidget {
     this.color = Colors.black87,
     this.isLogin = false,
     this.isDarkMode = false,
+    this.onTap,
   });
 
   @override
@@ -347,15 +353,10 @@ class _SettingsItem extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {
+          onTap: onTap ?? () {
             if (isLogin) {
               // Navegar a la página de login
-              Navigator.pushNamed(context, '/login');
-              // O si tienes una ruta específica:
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => LoginPage()),
-              // );
+              Get.toNamed('/login');
             } else {
               // Lógica para otros elementos del menú
               print('Tapped on $label');
