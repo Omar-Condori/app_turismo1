@@ -6,8 +6,22 @@ import '../data/providers/auth_provider.dart';
 class AuthBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AuthProvider>(() => AuthProvider());
-    Get.lazyPut<AuthRepository>(() => AuthRepository(Get.find()));
-    Get.lazyPut<AuthController>(() => AuthController());
+    print('=== AUTH BINDING INITIALIZATION ===');
+    
+    // Registrar providers si no están registrados
+    if (!Get.isRegistered<AuthProvider>()) {
+      Get.lazyPut<AuthProvider>(() => AuthProvider());
+    }
+    
+    if (!Get.isRegistered<AuthRepository>()) {
+      Get.lazyPut<AuthRepository>(() => AuthRepository(Get.find()));
+    }
+    
+    // Registrar controller si no está registrado
+    if (!Get.isRegistered<AuthController>()) {
+      Get.lazyPut<AuthController>(() => AuthController());
+    }
+    
+    print('=== AUTH BINDING COMPLETED ===');
   }
 }

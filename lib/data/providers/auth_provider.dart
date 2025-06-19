@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user_model.dart';
+import '../../core/constants/api_config.dart';
 
 class AuthProvider {
   final String baseUrl = 'https://api.capachica-tourism.com'; // Cambia por tu API
@@ -61,7 +62,7 @@ class AuthProvider {
       // Crear request multipart/form-data
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://127.0.0.1:8000/api/register'),
+        Uri.parse('${ApiConfig.baseUrl}/register'),
       );
 
       // Agregar headers
@@ -129,7 +130,7 @@ class AuthProvider {
   Future<Map<String, dynamic>> verifyEmail(String id, String hash) async {
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/email/verify/$id/$hash'),
+        Uri.parse('${ApiConfig.baseUrl}/email/verify/$id/$hash'),
         headers: {'Accept': 'application/json'},
       );
 

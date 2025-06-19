@@ -9,6 +9,9 @@ import '../../data/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../data/models/municipalidad_model.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/api_config.dart';
+import '../../core/constants/debug_config.dart';
 
 class HomeController extends GetxController {
   final TourismRepository _repository = Get.find<TourismRepository>();
@@ -46,17 +49,28 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadCurrentUser();
-    loadMunicipalidadInfo();
+    DebugConfig.log('HomeController onInit called');
+    // Cargar datos de forma asíncrona para evitar bloqueos
+    Future.microtask(() {
+      if (DebugConfig.enableUserLoad) {
+        loadCurrentUser();
+      }
+      if (DebugConfig.enableMunicipalidadLoad) {
+        loadMunicipalidadInfo();
+      }
+    });
   }
 
   Future<void> loadCurrentUser() async {
     try {
+      DebugConfig.log('Cargando usuario actual...');
       currentUser.value = await _authRepository.getCurrentUser();
       isUserLoaded.value = true;
+      DebugConfig.log('Usuario cargado exitosamente');
     } catch (e) {
-      print('Error al cargar usuario: $e');
+      DebugConfig.log('Error al cargar usuario: $e');
       isUserLoaded.value = true;
+      // No mostrar snackbar para evitar interrupciones
     }
   }
 
@@ -64,7 +78,11 @@ class HomeController extends GetxController {
     try {
       isLoading.value = true;
       print('Iniciando petición al dashboard...');
-      final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/dashboard/summary'));
+      
+      // Debug: mostrar la URL que se está usando
+      ApiConfig.printCurrentUrl();
+      
+      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}/dashboard/summary'));
       print('Respuesta recibida: ${response.statusCode}');
       print('Cuerpo de la respuesta: ${response.body}');
       
@@ -108,7 +126,7 @@ class HomeController extends GetxController {
     try {
       isLoading.value = true;
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/servicios'),
+        Uri.parse('${ApiConfig.baseUrl}/servicios'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -228,6 +246,7 @@ class HomeController extends GetxController {
         break;
       case 1: // Negocios
         loadEmprendimientos();
+        Get.toNamed('/emprendimientos');
         break;
       case 2: // Servicios
         loadServicios();
@@ -260,30 +279,45 @@ class HomeController extends GetxController {
   }
 
   Future<void> loadMunicipalidadInfo() async {
+    // Evitar llamadas múltiples si ya está cargando
+    if (isLoading.value) {
+      print('Ya está cargando, saltando llamada duplicada');
+      return;
+    }
+    
     try {
       isLoading.value = true;
-      print('Iniciando petición a la API de municipalidad...');
+      print('Cargando información de municipalidad...');
+      
+      // Debug: mostrar la URL que se está usando
+      ApiConfig.printCurrentUrl();
       
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/api/municipalidad'),
-      );
-      
-      print('Código de respuesta: ${response.statusCode}');
-      print('Respuesta del servidor: ${response.body}');
+        Uri.parse('${ApiConfig.baseUrl}/municipalidad'),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 10));
+
+      print('Respuesta de la API: ${response.statusCode}');
+      print('Cuerpo de la respuesta: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
+        
         if (jsonResponse['success'] == true && jsonResponse['data'] != null && jsonResponse['data'].isNotEmpty) {
           municipalidad.value = MunicipalidadModel.fromJson(jsonResponse['data'][0]);
-          print('Datos de la municipalidad cargados exitosamente');
+          print('Información de municipalidad cargada exitosamente');
         } else {
-          print('No se encontraron datos en la respuesta');
+          print('No se encontraron datos válidos en la respuesta');
+          municipalidad.value = null;
         }
       } else {
-        print('Error en la petición: ${response.statusCode}');
+        print('Error en la petición HTTP: ${response.statusCode}');
+        municipalidad.value = null;
       }
     } catch (e) {
-      print('Error en la petición: $e');
+      print('Error al cargar municipalidad: $e');
+      municipalidad.value = null;
+      // No mostrar snackbar aquí para evitar interrupciones en la UI
     } finally {
       isLoading.value = false;
     }

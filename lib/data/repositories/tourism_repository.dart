@@ -44,8 +44,10 @@ class TourismRepository {
     if (query.isEmpty) return [];
     final emprendimientos = await getEmprendimientos();
     return emprendimientos
-        .where((e) => e.name.toLowerCase().contains(query.toLowerCase()) ||
-        e.description.toLowerCase().contains(query.toLowerCase()))
+        .where((e) => e.nombre.toLowerCase().contains(query.toLowerCase()) ||
+        e.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+        e.tipoServicio.toLowerCase().contains(query.toLowerCase()) ||
+        e.categoria.toLowerCase().contains(query.toLowerCase()))
         .toList();
   }
 

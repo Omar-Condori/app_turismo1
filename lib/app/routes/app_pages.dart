@@ -4,6 +4,7 @@ import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/home/municipalidad_page.dart';
 import '../../presentation/pages/home/planes_page.dart';
 import '../../presentation/pages/home/servicios_page.dart';
+import '../../presentation/pages/home/emprendimientos_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/settings/settings_page.dart';
@@ -52,6 +53,11 @@ class AppPages {
       name: AppRoutes.PLANES,
       page: () => PlanesPage(),
       binding: PlanesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.EMPRENDIMIENTOS,
+      page: () => EmprendimientosPage(),
+      binding: HomeBinding(),
     ),
   ];
 }

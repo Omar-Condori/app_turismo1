@@ -3,25 +3,28 @@ import 'dart:convert';
 import '../models/emprendimiento_model.dart';
 import '../models/servicio_model.dart';
 import '../models/evento_model.dart';
+import '../../core/constants/api_config.dart';
 
 class TourismProvider {
-  final String baseUrl = 'https://api.capachica-tourism.com';
-
   // Emprendimientos
   Future<List<EmprendimientoModel>> getEmprendimientos() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/emprendimientos'),
+        Uri.parse('${ApiConfig.baseUrl}/emprendedores'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return (data['emprendimientos'] as List)
-            .map((json) => EmprendimientoModel.fromJson(json))
-            .toList();
+        if (data['success'] == true && data['data'] != null) {
+          return (data['data']['data'] as List)
+              .map((json) => EmprendimientoModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('No se pudieron cargar los emprendedores');
+        }
       } else {
-        throw Exception('Error al cargar emprendimientos');
+        throw Exception('Error al cargar emprendedores: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error de conexión: $e');
@@ -31,15 +34,19 @@ class TourismProvider {
   Future<EmprendimientoModel> getEmprendimientoById(String id) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/emprendimientos/$id'),
+        Uri.parse('${ApiConfig.baseUrl}/emprendedores/$id'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return EmprendimientoModel.fromJson(data['emprendimiento']);
+        if (data['success'] == true && data['data'] != null) {
+          return EmprendimientoModel.fromJson(data['data']);
+        } else {
+          throw Exception('No se pudo cargar el emprendedor');
+        }
       } else {
-        throw Exception('Error al cargar emprendimiento');
+        throw Exception('Error al cargar emprendedor: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error de conexión: $e');
@@ -50,17 +57,21 @@ class TourismProvider {
   Future<List<ServicioModel>> getServicios() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/servicios'),
+        Uri.parse('${ApiConfig.baseUrl}/servicios'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return (data['servicios'] as List)
-            .map((json) => ServicioModel.fromJson(json))
-            .toList();
+        if (data['success'] == true && data['data'] != null) {
+          return (data['data']['data'] as List)
+              .map((json) => ServicioModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('No se pudieron cargar los servicios');
+        }
       } else {
-        throw Exception('Error al cargar servicios');
+        throw Exception('Error al cargar servicios: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error de conexión: $e');
@@ -71,17 +82,21 @@ class TourismProvider {
   Future<List<EventoModel>> getEventos() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/eventos'),
+        Uri.parse('${ApiConfig.baseUrl}/eventos'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return (data['eventos'] as List)
-            .map((json) => EventoModel.fromJson(json))
-            .toList();
+        if (data['success'] == true && data['data'] != null) {
+          return (data['data']['data'] as List)
+              .map((json) => EventoModel.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('No se pudieron cargar los eventos');
+        }
       } else {
-        throw Exception('Error al cargar eventos');
+        throw Exception('Error al cargar eventos: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Error de conexión: $e');

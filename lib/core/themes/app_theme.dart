@@ -15,9 +15,9 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: AppColors.text),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: TextStyle(
-          color: AppColors.text,
+          color: AppColors.textPrimary,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
@@ -37,20 +37,20 @@ class AppTheme {
         headlineLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: AppColors.text,
+          color: AppColors.textPrimary,
         ),
         headlineMedium: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w600,
-          color: AppColors.text,
+          color: AppColors.textPrimary,
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
-          color: AppColors.text,
+          color: AppColors.textPrimary,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
-          color: AppColors.text,
+          color: AppColors.textPrimary,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

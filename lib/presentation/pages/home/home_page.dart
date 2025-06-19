@@ -323,15 +323,27 @@ class HomePage extends GetView<HomeController> {
   }
 
   void _onTabSelected(int index) {
+    print('=== TAB SELECTED ===');
+    print('Index seleccionado: $index');
+    print('Controller: $controller');
+    
     if (index == 0) { // Resumen
+      print('Navegando a resumen/municipalidad...');
       controller.loadMunicipalidadInfo();
       Get.toNamed('/municipalidad');
+    } else if (index == 1) { // Negocios
+      print('Navegando a negocios...');
+      controller.loadEmprendimientos();
+      Get.toNamed('/emprendimientos');
     } else if (index == 2) { // Servicios
+      print('Navegando a servicios...');
       Get.toNamed(AppRoutes.SERVICIOS);
     } else if (index == 3) { // Eventos
+      print('Navegando a eventos...');
       controller.loadEventos();
       Get.toNamed('/eventos');
     } else {
+      print('Cambiando tab a índice: $index');
       controller.changeTab(index);
     }
   }

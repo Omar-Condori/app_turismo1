@@ -21,6 +21,9 @@ class MunicipalidadModel {
   final String horarioDeAtencion;
   final List<dynamic> slidersPrincipales;
   final List<dynamic> slidersSecundarios;
+  final String fotoBienvenida;
+  final String fotoHistoria;
+  final String fotoComunidades;
 
   MunicipalidadModel({
     required this.id,
@@ -45,6 +48,9 @@ class MunicipalidadModel {
     required this.horarioDeAtencion,
     required this.slidersPrincipales,
     required this.slidersSecundarios,
+    required this.fotoBienvenida,
+    required this.fotoHistoria,
+    required this.fotoComunidades,
   });
 
   factory MunicipalidadModel.fromJson(Map<String, dynamic> json) {
@@ -71,6 +77,9 @@ class MunicipalidadModel {
       horarioDeAtencion: json['horariodeatencion'],
       slidersPrincipales: json['sliders_principales'] ?? [],
       slidersSecundarios: json['sliders_secundarios'] ?? [],
+      fotoBienvenida: json['foto_bienvenida'] ?? '',
+      fotoHistoria: json['foto_historia'] ?? '',
+      fotoComunidades: json['foto_comunidades'] ?? '',
     );
   }
 } 

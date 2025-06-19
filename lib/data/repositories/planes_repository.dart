@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/plan_model.dart';
+import '../../core/constants/api_config.dart';
 
 class PlanesRepository {
-  static const String _baseUrl = 'http://127.0.0.1:8000/api';
-
   Future<List<PlanModel>> getPlanesPublicos() async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/planes/publicos'),
+        Uri.parse('${ApiConfig.baseUrl}/planes/publicos'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -32,7 +31,7 @@ class PlanesRepository {
   Future<PlanModel> getPlanPorId(int id) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/planes/$id'),
+        Uri.parse('${ApiConfig.baseUrl}/planes/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

@@ -6,5 +6,6 @@ class AppRoutes {
   static const String SERVICIOS = '/servicios';
   static const String SETTINGS = '/settings';
   static const String EVENTOS = '/eventos';
-  static const PLANES = '/planes';
+  static const String PLANES = '/planes';
+  static const String EMPRENDIMIENTOS = '/emprendimientos';
 }
