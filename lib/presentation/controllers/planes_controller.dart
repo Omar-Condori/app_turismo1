@@ -10,6 +10,7 @@ class PlanesController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   final Rx<PlanModel?> selectedPlan = Rx<PlanModel?>(null);
+  final RxString searchQuery = ''.obs;
 
   @override
   void onInit() {
@@ -22,7 +23,7 @@ class PlanesController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final List<PlanModel> planesData = await _repository.getPlanesPublicos();
+      final List<PlanModel> planesData = await _repository.getPlanes();
       planes.assignAll(planesData);
 
     } catch (e) {
@@ -34,6 +35,23 @@ class PlanesController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void searchPlanes(String query) {
+    searchQuery.value = query;
+    if (query.isEmpty) {
+      loadPlanes();
+    } else {
+      _repository.searchPlanes(query).then((result) {
+        planes.assignAll(result);
+      }).catchError((error) {
+        Get.snackbar(
+          'Error',
+          'Error al buscar planes',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      });
     }
   }
 

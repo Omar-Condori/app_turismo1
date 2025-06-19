@@ -2,316 +2,157 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../controllers/home_controller.dart';
-import '../../../core/constants/app_colors.dart'; // Asegúrate de que esta ruta sea correcta
-import '../../../core/constants/app_strings.dart'; // Asegúrate de que esta ruta sea correcta
+import '../../../core/constants/app_colors.dart';
 import '../../../data/models/municipalidad_model.dart';
+import '../../widgets/common/custom_app_bar.dart';
+import '../../widgets/common/loading_widget.dart';
 
 class MunicipalidadPage extends GetView<HomeController> {
   // Sistema de colores renovado
-  static const Color primaryBlue = Color(0xFF667EEA); // Un azul vibrante
-  static const Color secondaryPurple = Color(0xFF764BA2); // Púrpura como acento
-  static const Color accentGold = Color(0xFFFFD700); // Dorado para elementos destacados
-  static const Color lightGray = Color(0xFFF8F9FA); // Fondo muy claro
-  static const Color darkGray = Color(0xFF2C3E50); // Texto oscuro principal
-  static const Color softBlue = Color(0xFFEBF5FF); // Azul suave para fondos de cards
-  static const Color successGreen = Color(0xFF27AE60); // Verde para éxito o elementos positivos
-  static const Color warmOrange = Color(0xFFE67E22); // Naranja cálido para resaltar
+  static const Color primaryBlue = Color(0xFF667EEA);
+  static const Color secondaryPurple = Color(0xFF764BA2);
+  static const Color accentGold = Color(0xFFFFD700);
+  static const Color lightGray = Color(0xFFF8F9FA);
+  static const Color darkGray = Color(0xFF2C3E50);
+  static const Color softBlue = Color(0xFFEBF5FF);
+  static const Color successGreen = Color(0xFF27AE60);
+  static const Color warmOrange = Color(0xFFE67E22);
   static const Color gradientStart = Color(0xFF5B6EE2);
   static const Color gradientEnd = Color(0xFF6D4BC2);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightGray,
-      body: Obx(() {
-        // Si está cargando, mostrar loading
-        if (controller.isLoading.value) {
-          return Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [gradientStart, gradientEnd],
-              ),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    duration: const Duration(seconds: 1),
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: value,
-                          child: const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            strokeWidth: 4,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 28),
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 800),
-                    curve: Curves.easeOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 20 * (1 - value)),
-                          child: const Text(
-                            'Cargando información...',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        // Si no está cargando pero no hay datos, mostrar mensaje de error
-        if (controller.municipalidad.value == null) {
-          return Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [gradientStart, gradientEnd],
-              ),
-            ),
-            child: Center(
-              child: TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: 1.0),
-                duration: const Duration(milliseconds: 700),
-                curve: Curves.easeOutCirc,
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.scale(
-                      scale: value,
-                      child: Container(
-                        margin: const EdgeInsets.all(24),
-                        padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(28),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 25,
-                              offset: const Offset(0, 10),
-                              spreadRadius: 3,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: primaryBlue.withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.error_outline,
-                                size: 52,
-                                color: primaryBlue,
-                              ),
-                            ),
-                            const SizedBox(height: 28),
-                            const Text(
-                              'Error de conexión',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                                color: darkGray,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet e inténtalo de nuevo.',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey[600],
-                                height: 1.5,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 32),
-                            ElevatedButton.icon(
-                              onPressed: () => controller.loadMunicipalidadInfo(),
-                              icon: const Icon(Icons.refresh, size: 22),
-                              label: const Text('Reintentar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryBlue,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 18),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32),
-                                ),
-                                elevation: 8,
-                                shadowColor: primaryBlue.withOpacity(0.4),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          );
-        }
-
-        final municipalidad = controller.municipalidad.value!;
-
-        return CustomScrollView(
-          slivers: [
-            _buildAppBar(),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  _buildWelcomeHeader(municipalidad),
-                  _buildFraseDestacada(municipalidad),
-                  _buildMisionVision(municipalidad),
-                  _buildSectionDivider('Acerca de Nosotros', Icons.info_outline),
-                  _buildAnimatedCard(
-                      _buildDescripcionCard(municipalidad)),
-                  _buildSectionDivider('Historia', Icons.bookmark_border),
-                  _buildAnimatedCard(
-                      _buildHistoriaCard(municipalidad)),
-                  _buildSectionDivider('Comunidades', Icons.groups_2_outlined),
-                  _buildAnimatedCard(
-                      _buildComunidadesCard(municipalidad)),
-                  _buildSectionDivider('Contáctanos', Icons.phone_in_talk_outlined),
-                  _buildAnimatedCard(
-                      _buildContactoCard(municipalidad)),
-                  _buildAnimatedCard(
-                      _buildRedesSocialesCard(municipalidad)),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
-          ],
-        );
-      }),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return SliverAppBar(
-      expandedHeight: 250,
-      floating: false,
-      pinned: true,
-      backgroundColor: primaryBlue,
-      leading: Container(
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: IconButton(
-          onPressed: () => Get.back(),
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 24),
-        ),
-      ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [gradientStart, gradientEnd],
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF667EEA),
+              Color(0xFF764BA2),
+            ],
           ),
-          child: Stack(
+        ),
+        child: SafeArea(
+          child: Column(
             children: [
-              // Patrón decorativo
-              Positioned.fill(
-                child: Opacity(
-                  opacity: 0.15,
-                  child: CustomPaint(
-                    painter: _PatternPainter(),
+              // App Bar personalizado
+              CustomAppBar(
+                title: 'Resumen Municipal',
+                showBackButton: true,
+                backgroundColor: Colors.transparent,
+                titleColor: Colors.white,
+                iconColor: Colors.white,
+                actions: [
+                  IconButton(
+                    onPressed: () => controller.loadMunicipalidadInfo(),
+                    icon: const Icon(Icons.refresh, color: Colors.white),
                   ),
-                ),
+                ],
               ),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 50),
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
+
+              // Contenido principal
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25),
+                    ),
+                  ),
+                  child: Obx(() {
+                    // Si está cargando, mostrar loading
+                    if (controller.isLoading.value) {
+                      return const LoadingWidget();
+                    }
+
+                    // Si no está cargando pero no hay datos, mostrar mensaje de error
+                    if (controller.municipalidad.value == null) {
+                      return _buildErrorState();
+                    }
+
+                    final municipalidad = controller.municipalidad.value!;
+
+                    return CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            children: [
+                              _buildWelcomeHeader(municipalidad),
+                              _buildFraseDestacada(municipalidad),
+                              _buildMisionVision(municipalidad),
+                              _buildSectionDivider('Acerca de Nosotros', Icons.info_outline),
+                              _buildAnimatedCard(_buildDescripcionCard(municipalidad)),
+                              _buildSectionDivider('Historia', Icons.bookmark_border),
+                              _buildAnimatedCard(_buildHistoriaCard(municipalidad)),
+                              _buildSectionDivider('Comunidades', Icons.groups_2_outlined),
+                              _buildAnimatedCard(_buildComunidadesCard(municipalidad)),
+                              _buildSectionDivider('Contacto', Icons.contact_phone_outlined),
+                              _buildAnimatedCard(_buildContactoCard(municipalidad)),
+                              _buildSectionDivider('Redes Sociales', Icons.share_outlined),
+                              _buildAnimatedCard(_buildRedesSocialesCard(municipalidad)),
+                              const SizedBox(height: 32),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/icons/img.png',
-                          width: 120,
-                          height: 120,
-                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    const Text(
-                      'Municipalidad Distrital',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const Text(
-                      'de Capachica',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                        fontFamily: 'Montserrat', // Ejemplo de fuente personalizada
-                      ),
-                    ),
-                  ],
+                      ],
+                    );
+                  }),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 80,
+            color: Colors.red[300],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Error de conexión',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet e inténtalo de nuevo.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => controller.loadMunicipalidadInfo(),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Reintentar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1236,27 +1077,4 @@ class MunicipalidadPage extends GetView<HomeController> {
       );
     }
   }
-}
-
-// Painter personalizado para el patrón decorativo
-class _PatternPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-
-    const spacing = 30.0;
-    const lineLength = 15.0; // Longitud de las pequeñas líneas
-
-    // Patrón de líneas diagonales entrecruzadas
-    for (double x = 0; x < size.width + size.height; x += spacing) {
-      canvas.drawLine(Offset(x, 0), Offset(x - size.height, size.height), paint);
-      canvas.drawLine(Offset(0, x), Offset(size.width, x - size.width), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

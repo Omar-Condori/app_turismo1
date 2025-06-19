@@ -337,7 +337,8 @@ class HomePage extends GetView<HomeController> {
       Get.toNamed('/emprendimientos');
     } else if (index == 2) { // Servicios
       print('Navegando a servicios...');
-      Get.toNamed(AppRoutes.SERVICIOS);
+      controller.loadServicios();
+      Get.toNamed('/servicios');
     } else if (index == 3) { // Eventos
       print('Navegando a eventos...');
       controller.loadEventos();

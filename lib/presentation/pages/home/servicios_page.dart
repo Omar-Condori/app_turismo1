@@ -1,264 +1,124 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/home_controller.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/custom_search_bar.dart';
+import '../../widgets/common/loading_widget.dart';
 import '../../widgets/servicios/servicio_card.dart';
-import '../../../core/constants/app_strings.dart';
-import '../../../core/constants/app_colors.dart';
 
 class ServiciosPage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
-    controller.loadServicios();
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.white,
-              Colors.grey[50]!,
-              Colors.purple[50]!.withOpacity(0.3),
+              Color(0xFF667EEA),
+              Color(0xFF764BA2),
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Custom App Bar with enhanced design
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.purple[50],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: IconButton(
-                        onPressed: () => Get.back(),
-                        icon: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Colors.purple[700],
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => LinearGradient(
-                          colors: [
-                            Colors.purple[600]!,
-                            Colors.purple[400]!,
-                            Colors.purpleAccent[200]!,
-                          ],
-                        ).createShader(bounds),
-                        child: Text(
-                          AppStrings.servicios,
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.purple[400]!,
-                            Colors.purpleAccent[200]!,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.purple.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.miscellaneous_services_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ],
-                ),
+              // App Bar personalizado
+              CustomAppBar(
+                title: 'Servicios',
+                showBackButton: true,
+                backgroundColor: Colors.transparent,
+                titleColor: Colors.white,
+                iconColor: Colors.white,
               ),
 
-              // Search bar with enhanced glassmorphism effect
-              Container(
-                margin: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.purple.withOpacity(0.1),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.purple.withOpacity(0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
+              // Barra de búsqueda
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: CustomSearchBar(
-                  onChanged: controller.searchServicios,
-                  hintText: AppStrings.searchServicios,
+                  hintText: 'Buscar servicios...',
+                  onChanged: (value) => controller.searchServicios(value),
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  textColor: Colors.white,
+                  hintColor: Colors.white70,
                 ),
               ),
 
-              // Categories with improved design
-              Container(
-                height: 60,
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  children: [
-                    _buildCategoryChip(AppStrings.all, true),
-                    _buildCategoryChip(AppStrings.transportation, false),
-                    _buildCategoryChip(AppStrings.guides, false),
-                    _buildCategoryChip(AppStrings.tours, false),
-                    _buildCategoryChip(AppStrings.other, false),
-                  ],
-                ),
-              ),
-
-              // Servicios list with enhanced cards
+              // Contenido principal
               Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.purple[400]!,
-                                  Colors.purpleAccent[200]!,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              strokeWidth: 3,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ShaderMask(
-                            shaderCallback: (bounds) => LinearGradient(
-                              colors: [
-                                Colors.purple[600]!,
-                                Colors.purpleAccent[200]!,
-                              ],
-                            ).createShader(bounds),
-                            child: const Text(
-                              'Cargando servicios...',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (controller.servicios.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.purple[100]!,
-                                  Colors.purple[50]!,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: Icon(
-                              Icons.search_off_rounded,
-                              size: 60,
-                              color: Colors.purple[400],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            'No hay servicios disponibles',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Intenta con otra búsqueda',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: () => controller.loadServicios(),
-                    color: Colors.purple[600],
-                    backgroundColor: Colors.white,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      itemCount: controller.servicios.length,
-                      itemBuilder: (context, index) {
-                        final servicio = controller.servicios[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: _buildEnhancedServicioCard(servicio),
-                        );
-                      },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25),
                     ),
-                  );
-                }),
+                  ),
+                  child: Column(
+                    children: [
+                      // Header con estadísticas
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatCard(
+                                icon: Icons.miscellaneous_services,
+                                title: 'Total Servicios',
+                                value: '${controller.servicios.length}',
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildStatCard(
+                                icon: Icons.check_circle,
+                                title: 'Activos',
+                                value: '${controller.servicios.where((s) => s.estado).length}',
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Lista de servicios
+                      Expanded(
+                        child: Obx(() {
+                          if (controller.isLoading.value) {
+                            return const LoadingWidget();
+                          }
+
+                          if (controller.servicios.isEmpty) {
+                            return _buildEmptyState();
+                          }
+
+                          return RefreshIndicator(
+                            onRefresh: () => controller.loadServicios(),
+                            child: ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: controller.servicios.length,
+                              itemBuilder: (context, index) {
+                                final servicio = controller.servicios[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: ServicioCard(
+                                    servicio: servicio,
+                                    onTap: () => _showServicioDetail(servicio),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -267,109 +127,92 @@ class ServiciosPage extends GetView<HomeController> {
     );
   }
 
-  Widget _buildEnhancedServicioCard(servicio) {
+  Widget _buildStatCard({
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+  }) {
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.purple.withOpacity(0.1),
+          color: color.withOpacity(0.3),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.purple.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         children: [
-          // Contenido original de la card
-          ServicioCard(
-            servicio: servicio,
-            onTap: () => controller.goToServicioDetail(servicio.id ?? 0),
+          Icon(
+            icon,
+            color: color,
+            size: 32,
           ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: color.withOpacity(0.8),
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 
-          // Botón "Ver detalle" con degradado morado fosforescente
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF667EEA),
-                      Color(0xFF764BA2),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF667EEA).withOpacity(0.4),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                    BoxShadow(
-                      color: Color(0xFF764BA2).withOpacity(0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(25),
-                    onTap: () => controller.goToServicioDetail(servicio.id ?? 0),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.visibility_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            'Ver detalle',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Colors.white,
-                              size: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.miscellaneous_services,
+            size: 80,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No se encontraron servicios',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Intenta con otra búsqueda o vuelve más tarde',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => controller.loadServicios(),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Recargar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
@@ -378,60 +221,116 @@ class ServiciosPage extends GetView<HomeController> {
     );
   }
 
-  Widget _buildCategoryChip(String label, bool isSelected) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 12.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: Colors.purple.withOpacity(0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ] : [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+  void _showServicioDetail(servicio) {
+    // Aquí puedes navegar a una página de detalle o mostrar un modal
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: ChoiceChip(
-          label: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey[700],
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              fontSize: 14,
-            ),
-          ),
-          selected: isSelected,
-          onSelected: (selected) {
-            // TODO: Implement category filtering
-          },
-          backgroundColor: Colors.white,
-          selectedColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-            side: BorderSide(
-              color: isSelected ? Colors.transparent : Colors.grey[300]!,
-              width: 1,
-            ),
-          ),
-          avatar: isSelected ? Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.purple[400]!,
-                  Colors.purpleAccent[200]!,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                servicio.nombre,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                servicio.descripcion,
+                style: const TextStyle(fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildDetailItem(
+                    Icons.attach_money,
+                    'S/. ${servicio.precioReferencial}',
+                  ),
+                  _buildDetailItem(
+                    Icons.location_on,
+                    servicio.ubicacionReferencia,
+                  ),
                 ],
               ),
-            ),
-          ) : null,
+              const SizedBox(height: 16),
+              if (servicio.emprendedor != null) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildDetailItem(
+                      Icons.business,
+                      servicio.emprendedor.nombre,
+                    ),
+                    _buildDetailItem(
+                      Icons.phone,
+                      servicio.emprendedor.telefono,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (servicio.categorias.isNotEmpty) ...[
+                Text(
+                  'Categorías:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: servicio.categorias
+                      .map((categoria) => Chip(
+                            label: Text(
+                              categoria.nombre,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            backgroundColor: AppColors.primary.withOpacity(0.1),
+                          ))
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+              ],
+              ElevatedButton(
+                onPressed: () => Get.back(),
+                child: const Text('Cerrar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailItem(IconData icon, String text) {
+    return Expanded(
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: AppColors.primary),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

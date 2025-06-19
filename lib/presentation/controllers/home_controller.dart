@@ -250,9 +250,11 @@ class HomeController extends GetxController {
         break;
       case 2: // Servicios
         loadServicios();
+        Get.toNamed('/servicios');
         break;
       case 3: // Eventos
         loadEventos();
+        Get.toNamed('/eventos');
         break;
     }
   }
@@ -276,6 +278,13 @@ class HomeController extends GetxController {
   void goToEventos() {
     // Navigate to eventos page or change tab
     selectedTabIndex.value = 3;
+    loadEventos();
+    Get.toNamed('/eventos');
+  }
+
+  void goToPlanes() {
+    // Navigate to planes page
+    Get.toNamed('/planes');
   }
 
   Future<void> loadMunicipalidadInfo() async {
@@ -292,27 +301,13 @@ class HomeController extends GetxController {
       // Debug: mostrar la URL que se está usando
       ApiConfig.printCurrentUrl();
       
-      final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/municipalidad'),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
-
-      print('Respuesta de la API: ${response.statusCode}');
-      print('Cuerpo de la respuesta: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        
-        if (jsonResponse['success'] == true && jsonResponse['data'] != null && jsonResponse['data'].isNotEmpty) {
-          municipalidad.value = MunicipalidadModel.fromJson(jsonResponse['data'][0]);
-          print('Información de municipalidad cargada exitosamente');
-        } else {
-          print('No se encontraron datos válidos en la respuesta');
-          municipalidad.value = null;
-        }
+      final result = await _repository.getMunicipalidad();
+      municipalidad.value = result;
+      
+      if (result != null) {
+        print('Información de municipalidad cargada exitosamente');
       } else {
-        print('Error en la petición HTTP: ${response.statusCode}');
-        municipalidad.value = null;
+        print('No se encontraron datos válidos en la respuesta');
       }
     } catch (e) {
       print('Error al cargar municipalidad: $e');

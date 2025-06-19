@@ -2,6 +2,10 @@ import '../providers/tourism_provider.dart';
 import '../models/emprendimiento_model.dart';
 import '../models/servicio_model.dart';
 import '../models/evento_model.dart';
+import '../models/municipalidad_model.dart';
+import '../../core/constants/api_config.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class TourismRepository {
   final TourismProvider _tourismProvider;
@@ -55,7 +59,7 @@ class TourismRepository {
     try {
       final servicios = await getServicios();
       return servicios.where((s) => 
-        (s.categorias?.any((c) => (c['nombre']?.toLowerCase() ?? '') == category.toLowerCase()) ?? false)
+        s.categorias.any((c) => c.nombre.toLowerCase() == category.toLowerCase())
       ).toList();
     } catch (e) {
       rethrow;
@@ -66,8 +70,9 @@ class TourismRepository {
     if (query.isEmpty) return [];
     final servicios = await getServicios();
     return servicios
-        .where((s) => (s.nombre?.toLowerCase() ?? '').contains(query.toLowerCase()) ||
-            (s.descripcion?.toLowerCase() ?? '').contains(query.toLowerCase()))
+        .where((s) => s.nombre.toLowerCase().contains(query.toLowerCase()) ||
+            s.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+            s.categorias.any((c) => c.nombre.toLowerCase().contains(query.toLowerCase())))
         .toList();
   }
 
@@ -75,8 +80,9 @@ class TourismRepository {
     if (query.isEmpty) return [];
     final eventos = await getEventos();
     return eventos
-        .where((e) => e.name.toLowerCase().contains(query.toLowerCase()) ||
-            e.description.toLowerCase().contains(query.toLowerCase()))
+        .where((e) => e.nombre.toLowerCase().contains(query.toLowerCase()) ||
+            e.descripcion.toLowerCase().contains(query.toLowerCase()) ||
+            e.categoria.toLowerCase().contains(query.toLowerCase()))
         .toList();
   }
 
@@ -90,6 +96,32 @@ class TourismRepository {
         ..sort((a, b) => a.startDate.compareTo(b.startDate));
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<MunicipalidadModel?> getMunicipalidad() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/municipalidad'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null && jsonResponse['data'].isNotEmpty) {
+          return MunicipalidadModel.fromJson(jsonResponse['data'][0]);
+        } else {
+          print('No se encontraron datos válidos en la respuesta');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión: $e');
+      return null;
     }
   }
 }

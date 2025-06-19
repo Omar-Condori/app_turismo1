@@ -4,10 +4,10 @@ import '../models/plan_model.dart';
 import '../../core/constants/api_config.dart';
 
 class PlanesRepository {
-  Future<List<PlanModel>> getPlanesPublicos() async {
+  Future<List<PlanModel>> getPlanes() async {
     try {
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/planes/publicos'),
+        Uri.parse('${ApiConfig.baseUrl}/planes'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -15,17 +15,33 @@ class PlanesRepository {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> jsonData = json.decode(response.body);
-        return jsonData.map((json) => PlanModel.fromJson(json)).toList();
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          final List<dynamic> planesData = jsonResponse['data']['data'] ?? [];
+          return planesData.map((json) => PlanModel.fromJson(json)).toList();
+        } else {
+          print('No se encontraron datos válidos en la respuesta');
+          return [];
+        }
       } else {
-        throw Exception('Error al cargar planes: ${response.statusCode}');
+        print('Error en la respuesta: ${response.statusCode}');
+        return [];
       }
     } catch (e) {
-      // Si hay error de conexión, retornar datos de prueba
       print('Error de conexión: $e');
       print('Retornando datos de prueba...');
       return _getPlanesDePrueba();
     }
+  }
+
+  Future<List<PlanModel>> searchPlanes(String query) async {
+    if (query.isEmpty) return [];
+    final planes = await getPlanes();
+    return planes
+        .where((p) => p.nombre.toLowerCase().contains(query.toLowerCase()) ||
+            p.descripcion.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   Future<PlanModel> getPlanPorId(int id) async {
@@ -39,18 +55,27 @@ class PlanesRepository {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = json.decode(response.body);
-        return PlanModel.fromJson(jsonData);
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          return PlanModel.fromJson(jsonResponse['data']);
+        } else {
+          throw Exception('No se encontraron datos válidos');
+        }
       } else {
         throw Exception('Error al cargar plan: ${response.statusCode}');
       }
     } catch (e) {
-      // Si hay error de conexión, retornar un plan de prueba
       print('Error de conexión: $e');
       print('Retornando plan de prueba...');
       return _getPlanesDePrueba().firstWhere((plan) => plan.id == id, 
         orElse: () => _getPlanesDePrueba().first);
     }
+  }
+
+  // Método para compatibilidad con código existente
+  Future<List<PlanModel>> getPlanesPublicos() async {
+    return getPlanes();
   }
 
   // Datos de prueba para cuando el API no esté disponible
