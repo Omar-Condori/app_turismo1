@@ -1,6 +1,7 @@
 import '../providers/tourism_provider.dart';
 import '../models/emprendimiento_model.dart';
 import '../models/servicio_model.dart';
+import '../models/servicio_detalle_model.dart';
 import '../models/evento_model.dart';
 import '../models/municipalidad_model.dart';
 import '../models/maps_model.dart';
@@ -148,6 +149,148 @@ class TourismRepository {
       }
     } catch (e) {
       print('Error de conexión: $e');
+      return null;
+    }
+  }
+
+  // Métodos para detalles de servicios
+  Future<ServicioDetalleModel?> getServicioDetalle(int servicioId) async {
+    try {
+      print('Intentando cargar detalles del servicio ID: $servicioId');
+      final url = '${ApiConfig.baseUrl}/servicios/$servicioId';
+      print('URL: $url');
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          print('Datos del servicio cargados exitosamente');
+          return ServicioDetalleModel.fromJson(jsonResponse['data']);
+        } else {
+          print('No se encontraron datos válidos en la respuesta');
+          print('Success: ${jsonResponse['success']}');
+          print('Data: ${jsonResponse['data']}');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta: ${response.statusCode}');
+        print('Error body: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión: $e');
+      return null;
+    }
+  }
+
+  Future<UbicacionModel?> getServicioUbicacion(int servicioId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/servicios/ubicacion'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          return UbicacionModel.fromJson(jsonResponse['data']);
+        } else {
+          print('No se encontraron datos de ubicación válidos');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta de ubicación: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión para ubicación: $e');
+      return null;
+    }
+  }
+
+  Future<DisponibilidadModel?> getServicioDisponibilidad(int servicioId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/servicios/verificar-disponibilidad'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          return DisponibilidadModel.fromJson(jsonResponse['data']);
+        } else {
+          print('No se encontraron datos de disponibilidad válidos');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta de disponibilidad: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión para disponibilidad: $e');
+      return null;
+    }
+  }
+
+  Future<EmprendedorDetalleModel?> getEmprendedorDetalle(int emprendedorId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/servicios/emprendedor/$emprendedorId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          return EmprendedorDetalleModel.fromJson(jsonResponse['data']);
+        } else {
+          print('No se encontraron datos del emprendedor válidos');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta del emprendedor: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión para emprendedor: $e');
+      return null;
+    }
+  }
+
+  Future<CategoriaDetalleModel?> getCategoriaDetalle(int categoriaId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/servicios/categoria/$categoriaId'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          return CategoriaDetalleModel.fromJson(jsonResponse['data']);
+        } else {
+          print('No se encontraron datos de categoría válidos');
+          return null;
+        }
+      } else {
+        print('Error en la respuesta de categoría: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error de conexión para categoría: $e');
       return null;
     }
   }

@@ -4,6 +4,7 @@ class AppRoutes {
   static const String REGISTER = '/register';
   static const String MUNICIPALIDAD = '/municipalidad';
   static const String SERVICIOS = '/servicios';
+  static const String SERVICIO_DETALLE = '/servicio-detalle';
   static const String SETTINGS = '/settings';
   static const String EVENTOS = '/eventos';
   static const String PLANES = '/planes';

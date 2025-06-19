@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import '../../bindings/planes_binding.dart';
 import '../../bindings/maps_binding.dart';
+import '../../bindings/servicio_detalle_binding.dart';
 import '../../presentation/pages/home/home_page.dart';
 import '../../presentation/pages/home/municipalidad_page.dart';
 import '../../presentation/pages/home/planes_page.dart';
 import '../../presentation/pages/home/servicios_page.dart';
+import '../../presentation/pages/servicios/servicio_detalle_page.dart';
 import '../../presentation/pages/home/emprendimientos_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
@@ -65,6 +67,11 @@ class AppPages {
       name: AppRoutes.MAPS,
       page: () => MapsPage(),
       binding: MapsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SERVICIO_DETALLE,
+      page: () => ServicioDetallePage(servicioId: Get.arguments['servicioId']),
+      binding: ServicioDetalleBinding(),
     ),
   ];
 }
