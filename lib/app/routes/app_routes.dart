@@ -10,4 +10,6 @@ class AppRoutes {
   static const String PLANES = '/planes';
   static const String EMPRENDIMIENTOS = '/emprendimientos';
   static const String MAPS = '/maps';
+  static const String MIS_RESERVAS = '/mis-reservas';
+  static const String CARRITO = '/carrito';
 }

@@ -187,6 +187,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 20),
                 _buildSectionTitle('Account'),
                 _SettingsItem(
+                  icon: Icons.book_online,
+                  label: 'Mis Reservas',
+                  color: const Color(0xFF9C27B0),
+                  isDarkMode: isDarkMode,
+                  onTap: () => Get.toNamed('/mis-reservas'),
+                ),
+                _SettingsItem(
                   icon: Icons.login,
                   label: 'Login',
                   color: const Color(0xFF1565C0),
