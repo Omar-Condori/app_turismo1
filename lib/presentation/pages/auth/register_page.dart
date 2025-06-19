@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
-// import '../../controllers/auth_controller.dart';
+import '../../controllers/auth_controller.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 // import '../../widgets/common/custom_text_field.dart';
 // import '../../widgets/common/custom_button.dart';
 // import '../../widgets/auth/social_login_button.dart';
@@ -18,22 +20,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final PageController _pageController = PageController();
   final RxInt _currentPage = 0.obs;
   Timer? _timer;
-
-  // Controllers de ejemplo (reemplaza con tu AuthController)
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-  final phoneController = TextEditingController();
-  final countryController = TextEditingController();
-  final birthDateController = TextEditingController();
-  final genderController = TextEditingController();
-  final preferredLanguageController = TextEditingController();
-  final addressController = TextEditingController();
-  final fotoPerfilController = TextEditingController();
-  final registerFormKey = GlobalKey<FormState>();
-  final RxBool isPasswordVisible = false.obs;
-  final RxBool isLoading = false.obs;
+  
+  // Obtener el controlador de autenticación
+  late AuthController authController;
 
   // Lista de imágenes para el slider (usando placeholders)
   final List<String> sliderImages = [
@@ -46,12 +35,26 @@ class _RegisterPageState extends State<RegisterPage> {
   final List<String> paises = [
     'Perú', 'Argentina', 'Bolivia', 'Brasil', 'Chile', 'Colombia', 'Ecuador', 'España', 'México', 'Estados Unidos', 'Francia', 'Italia', 'Alemania', 'Japón', 'China', 'India', 'Canadá', 'Australia', 'Reino Unido',
   ];
-  final List<String> generos = ['Masculino', 'Femenino', 'Otro'];
+  final List<Map<String, String>> generos = [
+    {'label': 'Masculino', 'value': 'male'},
+    {'label': 'Femenino', 'value': 'female'},
+    {'label': 'Otro', 'value': 'other'},
+  ];
   final List<String> idiomas = ['Español', 'Inglés', 'Francés', 'Portugués', 'Alemán', 'Italiano', 'Chino', 'Japonés', 'Quechua', 'Aymara'];
 
   String? paisSeleccionado;
   String? generoSeleccionado;
   String? idiomaSeleccionado;
+
+  File? _pickedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    // Obtener el controlador de autenticación
+    authController = Get.find<AuthController>();
+  }
 
   void _startAutoSlider() {
     _timer = Timer.periodic(Duration(seconds: 4), (timer) {
@@ -72,17 +75,31 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void togglePasswordVisibility() {
-    isPasswordVisible.value = !isPasswordVisible.value;
+    authController.togglePasswordVisibility();
   }
 
-  void signUpWithEmail() {
-    if (registerFormKey.currentState!.validate()) {
-      isLoading.value = true;
-      // Simular carga
-      Future.delayed(Duration(seconds: 2), () {
-        isLoading.value = false;
-        // Lógica de registro aquí
-      });
+  void signUpWithEmail() async {
+    if (authController.registerFormKey.currentState!.validate()) {
+      try {
+        // Actualizar los controladores del AuthController con los valores del formulario
+        authController.nameController.text = authController.nameController.text;
+        authController.emailController.text = authController.emailController.text;
+        authController.passwordController.text = authController.passwordController.text;
+        authController.phoneController.text = authController.phoneController.text;
+        authController.countryController.text = authController.countryController.text;
+        authController.birthDateController.text = authController.birthDateController.text;
+        authController.addressController.text = authController.addressController.text;
+        authController.genderController.text = authController.genderController.text;
+        authController.preferredLanguageController.text = authController.preferredLanguageController.text;
+        authController.fotoPerfilController.text = authController.fotoPerfilController.text;
+        
+        // Llamar al método de registro del controlador
+        await authController.signUpWithEmail();
+        
+        // El controlador ya maneja la navegación y los mensajes
+      } catch (e) {
+        print('Error en registro: $e');
+      }
     }
   }
 
@@ -94,6 +111,32 @@ class _RegisterPageState extends State<RegisterPage> {
   void goToLogin() {
     // Navegación al login
     Get.offAllNamed('/login');
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (image != null) {
+      setState(() {
+        _pickedImage = File(image.path);
+        authController.setSelectedImage(_pickedImage!);
+      });
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+    if (image != null) {
+      setState(() {
+        _pickedImage = File(image.path);
+        authController.setSelectedImage(_pickedImage!);
+      });
+    }
   }
 
   @override
@@ -286,7 +329,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(28),
                                 child: Form(
-                                  key: registerFormKey,
+                                  key: authController.registerFormKey,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -325,7 +368,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de nombre completo con bordes redondeados
                                       _buildModernTextField(
-                                        controller: nameController,
+                                        controller: authController.nameController,
                                         hintText: 'Nombre completo',
                                         icon: Icons.person_outline,
                                         keyboardType: TextInputType.name,
@@ -341,7 +384,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de email con bordes redondeados
                                       _buildModernTextField(
-                                        controller: emailController,
+                                        controller: authController.emailController,
                                         hintText: 'usuario@ejemplo.com',
                                         icon: Icons.email_outlined,
                                         keyboardType: TextInputType.emailAddress,
@@ -360,14 +403,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de contraseña con bordes redondeados
                                       Obx(() => _buildModernTextField(
-                                        controller: passwordController,
+                                        controller: authController.passwordController,
                                         hintText: 'Contraseña',
                                         icon: Icons.lock_outline,
-                                        obscureText: !isPasswordVisible.value,
+                                        obscureText: !authController.isPasswordVisible.value,
                                         suffixIcon: IconButton(
                                           onPressed: togglePasswordVisibility,
                                           icon: Icon(
-                                            isPasswordVisible.value
+                                            authController.isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
                                             color: Colors.grey[600],
@@ -389,14 +432,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de confirmar contraseña
                                       Obx(() => _buildModernTextField(
-                                        controller: confirmPasswordController,
+                                        controller: authController.confirmPasswordController,
                                         hintText: 'Confirmar contraseña',
                                         icon: Icons.lock_outline,
-                                        obscureText: !isPasswordVisible.value,
+                                        obscureText: !authController.isPasswordVisible.value,
                                         suffixIcon: IconButton(
                                           onPressed: togglePasswordVisibility,
                                           icon: Icon(
-                                            isPasswordVisible.value
+                                            authController.isPasswordVisible.value
                                                 ? Icons.visibility_outlined
                                                 : Icons.visibility_off_outlined,
                                             color: Colors.grey[600],
@@ -407,7 +450,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           if (value == null || value.isEmpty) {
                                             return 'Campo requerido';
                                           }
-                                          if (value != passwordController.text) {
+                                          if (value != authController.passwordController.text) {
                                             return 'Las contraseñas no coinciden';
                                           }
                                           return null;
@@ -418,7 +461,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de teléfono
                                       _buildModernTextField(
-                                        controller: phoneController,
+                                        controller: authController.phoneController,
                                         hintText: '+51 999 999 999',
                                         icon: Icons.phone_outlined,
                                         keyboardType: TextInputType.phone,
@@ -442,7 +485,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             paisSeleccionado = value;
-                                            countryController.text = value ?? '';
+                                            authController.countryController.text = value ?? '';
                                           });
                                         },
                                         hintText: 'Selecciona tu país',
@@ -454,7 +497,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de fecha de nacimiento
                                       _buildModernTextField(
-                                        controller: birthDateController,
+                                        controller: authController.birthDateController,
                                         hintText: 'Fecha de nacimiento',
                                         icon: Icons.calendar_today_outlined,
                                         readOnly: true,
@@ -467,7 +510,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                             locale: const Locale('es', ''),
                                           );
                                           if (picked != null) {
-                                            birthDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                                            authController.birthDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                                           }
                                         },
                                         validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
@@ -479,13 +522,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                       _buildModernDropdown<String>(
                                         value: generoSeleccionado,
                                         items: generos.map((g) => DropdownMenuItem(
-                                          value: g,
-                                          child: Text(g, style: TextStyle(color: Colors.grey[700])),
+                                          value: g['value'],
+                                          child: Text(g['label']!, style: TextStyle(color: Colors.grey[700])),
                                         )).toList(),
                                         onChanged: (value) {
                                           setState(() {
                                             generoSeleccionado = value;
-                                            genderController.text = value ?? '';
+                                            authController.genderController.text = value ?? '';
                                           });
                                         },
                                         hintText: 'Selecciona tu género',
@@ -505,7 +548,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             idiomaSeleccionado = value;
-                                            preferredLanguageController.text = value ?? '';
+                                            authController.preferredLanguageController.text = value ?? '';
                                           });
                                         },
                                         hintText: 'Selecciona tu idioma',
@@ -517,7 +560,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       // Campo de dirección
                                       _buildModernTextField(
-                                        controller: addressController,
+                                        controller: authController.addressController,
                                         hintText: 'Av. El Sol 123, Cusco',
                                         icon: Icons.location_on_outlined,
                                         keyboardType: TextInputType.streetAddress,
@@ -532,25 +575,69 @@ class _RegisterPageState extends State<RegisterPage> {
                                       const SizedBox(height: 16),
 
                                       // Campo de foto de perfil
-                                      _buildModernTextField(
-                                        controller: fotoPerfilController,
-                                        hintText: 'https://ejemplo.com/foto.jpg',
-                                        icon: Icons.photo_camera_outlined,
-                                        keyboardType: TextInputType.url,
-                                        validator: (value) {
-                                          // Campo opcional
-                                          return null;
-                                        },
+                                      Row(
+                                        children: [
+                                          _pickedImage != null
+                                              ? CircleAvatar(
+                                                  backgroundImage: FileImage(_pickedImage!),
+                                                  radius: 28,
+                                                )
+                                              : CircleAvatar(
+                                                  child: Icon(Icons.person, size: 32),
+                                                  radius: 28,
+                                                ),
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    ElevatedButton.icon(
+                                                      onPressed: _pickImage,
+                                                      icon: Icon(Icons.photo_library),
+                                                      label: Text('Galería'),
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Colors.white,
+                                                        foregroundColor: Colors.black,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(18),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    ElevatedButton.icon(
+                                                      onPressed: _takePhoto,
+                                                      icon: Icon(Icons.camera_alt),
+                                                      label: Text('Cámara'),
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Colors.white,
+                                                        foregroundColor: Colors.black,
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(18),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  _pickedImage != null ? 'Foto seleccionada' : 'Selecciona o toma una foto',
+                                                  style: TextStyle(fontSize: 12, color: Colors.white),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-
-                                      const SizedBox(height: 24),
+                                      const SizedBox(height: 16),
 
                                       // Botón de crear cuenta
                                       Obx(() => _buildModernButton(
-                                        onPressed: isLoading.value
+                                        onPressed: authController.isLoading.value
                                             ? null
                                             : signUpWithEmail,
-                                        text: isLoading.value
+                                        text: authController.isLoading.value
                                             ? 'Cargando...'
                                             : 'Crear Cuenta',
                                         isPrimary: true,

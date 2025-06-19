@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 // Configuración de la API
 class ApiConfig {
   // URL base para diferentes entornos
+  // Android emulador: 10.0.2.2, iOS simulador: localhost, Web: 127.0.0.1
   static const String baseUrlAndroid = 'http://10.0.2.2:8000/api';
   static const String baseUrlIOS = 'http://localhost:8000/api';
   static const String baseUrlWeb = 'http://127.0.0.1:8000/api';
@@ -24,6 +25,6 @@ class ApiConfig {
   
   // Función para debug - mostrar qué URL se está usando
   static void printCurrentUrl() {
-    print('API Config - URL actual: ${baseUrl}');
+    print('API Config - URL actual: [32m${baseUrl}[0m');
   }
 } 

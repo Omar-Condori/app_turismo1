@@ -1,4 +1,4 @@
-package com.example.app_turismo1
+package com.example.capachica_tourism_app
 
 import io.flutter.embedding.android.FlutterActivity
 

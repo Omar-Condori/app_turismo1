@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:io';
 import '../../data/repositories/auth_repository.dart';
 import '../../app/routes/app_routes.dart';
 import '../../data/models/user_model.dart';
@@ -21,9 +22,17 @@ class AuthController extends GetxController {
 
   final RxBool isLoading = false.obs;
   final RxBool isPasswordVisible = false.obs;
+  final Rx<File?> selectedImage = Rx<File?>(null);
 
   final formKey = GlobalKey<FormState>();
   final registerFormKey = GlobalKey<FormState>();
+
+  // Mapeo de géneros
+  final Map<String, String> genderMap = {
+    'Masculino': 'male',
+    'Femenino': 'female',
+    'Otro': 'other'
+  };
 
   @override
   void onClose() {
@@ -41,8 +50,58 @@ class AuthController extends GetxController {
     super.onClose();
   }
 
+  void setSelectedImage(File image) {
+    selectedImage.value = image;
+  }
+
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
+  // Validar campos requeridos
+  bool validateRequiredFields() {
+    if (nameController.text.isEmpty) {
+      showError('El nombre es requerido');
+      return false;
+    }
+    if (emailController.text.isEmpty) {
+      showError('El email es requerido');
+      return false;
+    }
+    if (passwordController.text.isEmpty) {
+      showError('La contraseña es requerida');
+      return false;
+    }
+    if (phoneController.text.isEmpty) {
+      showError('El teléfono es requerido');
+      return false;
+    }
+    if (countryController.text.isEmpty) {
+      showError('El país es requerido');
+      return false;
+    }
+    if (birthDateController.text.isEmpty) {
+      showError('La fecha de nacimiento es requerida');
+      return false;
+    }
+    if (genderController.text.isEmpty) {
+      showError('El género es requerido');
+      return false;
+    }
+    return true;
+  }
+
+  void showError(String message) {
+    Get.snackbar(
+      'Error',
+      message,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 4),
+      icon: const Icon(Icons.error, color: Colors.white),
+    );
   }
 
   Future<void> signInWithEmail() async {
@@ -50,41 +109,18 @@ class AuthController extends GetxController {
 
     try {
       isLoading.value = true;
-      
-      // Verificar credenciales específicas
-      if (emailController.text.trim() == 'admin@example.com' && 
-          passwordController.text == 'password') {
-        // Crear un usuario mock con las credenciales específicas
-        final user = UserModel(
-          id: '1',
-          name: 'Admin',
-          email: 'admin@example.com',
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-        
-        // Guardar el usuario en el almacenamiento
-        await _authRepository.saveUser(user);
-        
-        // Navegar al home
-        Get.offAllNamed(AppRoutes.HOME);
-        return;
-      }
-      
-      // Si no son las credenciales específicas, intentar login normal
       final user = await _authRepository.signInWithEmail(
         emailController.text.trim(),
         passwordController.text,
       );
       
-      // Verificar el email si tenemos el ID y hash del usuario
       if (user.id != null && user.verificationHash != null) {
         await verifyEmail(user.id!, user.verificationHash!);
       }
       
       Get.offAllNamed(AppRoutes.HOME);
     } catch (e) {
-      Get.snackbar('Error', 'Error al iniciar sesión: ${e.toString()}');
+      showError('Error al iniciar sesión: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
@@ -96,7 +132,7 @@ class AuthController extends GetxController {
       await _authRepository.signInWithGoogle();
       Get.offAllNamed(AppRoutes.HOME);
     } catch (e) {
-      Get.snackbar('Error', 'Error al iniciar sesión con Google: ${e.toString()}');
+      showError('Error al iniciar sesión con Google: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
@@ -104,9 +140,27 @@ class AuthController extends GetxController {
 
   Future<void> signUpWithEmail() async {
     if (!registerFormKey.currentState!.validate()) return;
+    if (!validateRequiredFields()) return;
+
+    // Validar que se haya seleccionado una imagen
+    if (selectedImage.value == null) {
+      showError('Por favor selecciona una foto de perfil');
+      return;
+    }
 
     try {
       isLoading.value = true;
+      
+      // Verificar que el archivo de imagen existe
+      final file = File(selectedImage.value!.path);
+      if (!await file.exists()) {
+        showError('La imagen seleccionada no existe o no es accesible');
+        return;
+      }
+
+      // Convertir género al formato esperado por el backend
+      String backendGender = genderMap[genderController.text] ?? 'other';
+
       await _authRepository.signUp(
         nameController.text.trim(),
         emailController.text.trim(),
@@ -115,24 +169,46 @@ class AuthController extends GetxController {
         country: countryController.text.trim(),
         birthDate: birthDateController.text.trim(),
         address: addressController.text.trim(),
-        gender: genderController.text.trim(),
+        gender: backendGender,
         preferredLanguage: preferredLanguageController.text.trim(),
-        fotoPerfil: fotoPerfilController.text.trim(),
+        fotoPerfil: selectedImage.value!.path,
       );
-      Get.snackbar('¡Registro exitoso!', 'Bienvenido/a a la app.',
-        snackPosition: SnackPosition.BOTTOM,
+      
+      Get.snackbar(
+        '¡Registro exitoso!', 
+        'Tu cuenta ha sido creada correctamente. Por favor inicia sesión.',
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 4),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
       );
+      
+      clearRegisterForm();
       await Future.delayed(const Duration(seconds: 2));
-      Get.offAllNamed(AppRoutes.HOME);
+      Get.offAllNamed(AppRoutes.LOGIN);
     } catch (e) {
-      Get.snackbar('Error', 'Error al registrarse: ${e.toString()}');
+      print('Error detallado en el registro: $e');
+      showError('Error al registrarse: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void clearRegisterForm() {
+    nameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    phoneController.clear();
+    countryController.clear();
+    birthDateController.clear();
+    addressController.clear();
+    genderController.clear();
+    preferredLanguageController.clear();
+    fotoPerfilController.clear();
+    selectedImage.value = null;
   }
 
   void goToRegister() {
@@ -155,7 +231,7 @@ class AuthController extends GetxController {
       Get.snackbar('Éxito', 'Email verificado correctamente');
     } catch (e) {
       print('Error al verificar email: $e');
-      Get.snackbar('Error', 'Error al verificar el email: ${e.toString()}');
+      showError('Error al verificar el email: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }

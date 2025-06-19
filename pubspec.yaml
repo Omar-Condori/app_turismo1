@@ -20,7 +20,7 @@ dependencies:
   get: ^4.6.6
 
   # HTTP y conectividad
-  http: ^1.1.0
+  http: ^1.2.0
   connectivity_plus: ^6.1.4
 
   # Almacenamiento local
@@ -29,12 +29,12 @@ dependencies:
   # Utilidades
 
   # UI y multimedia
-  cached_network_image: ^3.3.0
-  image_picker: ^1.0.4
+  cached_network_image: ^3.3.1
+  image_picker: ^1.0.7
 
   # Geolocalización y mapas
-  geolocator: ^10.1.0
-  google_maps_flutter: ^2.5.0
+  geolocator: ^11.0.0
+  google_maps_flutter: ^2.6.0
 
   # Iconos
   cupertino_icons: ^1.0.6
@@ -43,7 +43,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
